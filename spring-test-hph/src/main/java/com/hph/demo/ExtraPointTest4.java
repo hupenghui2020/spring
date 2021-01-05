@@ -14,7 +14,6 @@ public class ExtraPointTest4 implements MergedBeanDefinitionPostProcessor {
 
 	@Override
 	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
-		System.out.println("这个扩展点可以修改合并了的beanDefinition");
-		System.out.println(beanDefinition.getBeanClass().getName());
+		System.out.println("ExtraPointTest4 postProcessMergedBeanDefinition");
 	}
 }

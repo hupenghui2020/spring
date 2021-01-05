@@ -17,8 +17,6 @@ public class ExtraPointTest9 implements BeanFactoryAware {
 	@Override
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 
-		System.out.println("实现了BeanFactoryAware 接口。。。。。。");
-		A a = (A)beanFactory.getBean("a");
-		a.print();
+		System.out.println("ExtraPointTest9 setBeanFactory");
 	}
 }

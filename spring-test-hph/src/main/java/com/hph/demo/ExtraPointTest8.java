@@ -14,5 +14,6 @@ public class ExtraPointTest8 implements BeanClassLoaderAware {
 
 	@Override
 	public void setBeanClassLoader(ClassLoader classLoader) {
+		System.out.println("ExtraPointTest8 setBeanClassLoader");
 	}
 }

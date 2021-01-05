@@ -19,13 +19,13 @@ public class ExtraPointTest2 implements BeanDefinitionRegistryPostProcessor, Ord
 	@Override
 	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
 
-		System.out.println("测试扩展点2: 测试是否是在执行 ConfigurationClassPostProcessor 类的地方执行的");
-		System.out.println("测试扩展点2: " + registry.getBeanDefinitionCount());
+		System.out.println("ExtraPointTest2 postProcessBeanDefinitionRegistry");
 	}
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
+		System.out.println("ExtraPointTest2 postProcessBeanFactory");
 	}
 
 

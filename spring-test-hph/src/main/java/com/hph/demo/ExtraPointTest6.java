@@ -25,9 +25,7 @@ public class ExtraPointTest6 implements InstantiationAwareBeanPostProcessor {
 	@Override
 	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException {
 
-		if(bean instanceof A) {
-			System.out.println("到我修改属性了！！！！！！！！！！！");
-		}
+		System.out.println("ExtraPointTest6 postProcessProperties");
 		return pvs;
 	}
 }

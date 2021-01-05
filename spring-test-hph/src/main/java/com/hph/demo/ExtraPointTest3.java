@@ -17,11 +17,11 @@ public class ExtraPointTest3 implements BeanDefinitionRegistryPostProcessor {
 	@Override
 	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
 
-		System.out.println("测试扩展点3: 执行其他程序员自定义并且实现 BeanDefinitionRegistryPostProcessor 接口并且没有实现Ordered接口的 postProcessBeanDefinitionRegistry 方法");
-		System.out.println("测试扩展点3: " + registry.getBeanDefinitionCount());
+		System.out.println("ExtraPointTest3 postProcessBeanDefinitionRegistry");
 	}
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+		System.out.println("ExtraPointTest3 postProcessBeanFactory");
 	}
 }

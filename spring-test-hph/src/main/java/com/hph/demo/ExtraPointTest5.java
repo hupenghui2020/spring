@@ -19,10 +19,7 @@ public class ExtraPointTest5 implements InstantiationAwareBeanPostProcessor {
 	@Override
 	public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
 
-		// 如果返回 false，说明不需要属性填充了，直接返回（默认是true）
-		if(bean instanceof A) {
-			System.out.println("到我了！！！！！！！！！！！");
-		}
+		System.out.println("ExtraPointTest5 postProcessAfterInstantiation");
 		return true;
 	}
 }

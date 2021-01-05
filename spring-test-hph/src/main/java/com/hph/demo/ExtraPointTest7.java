@@ -13,6 +13,6 @@ public class ExtraPointTest7 implements BeanNameAware {
 
 	@Override
 	public void setBeanName(String name) {
-		System.out.println("实现了 BeanNameAware 接口：" + name);
+		System.out.println("ExtraPointTest7 setBeanName");
 	}
 }
