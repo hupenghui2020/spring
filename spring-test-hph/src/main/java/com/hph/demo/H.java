@@ -10,19 +10,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class H {
 
-	//@Autowired
+	@Autowired
 	private Z z;
 
-	//@Autowired
-	private W w;
-
-	@Autowired
+	/*@Autowired
 	public void setZ(Z z, W w) {
 		this.z = z;
 		this.w = w;
 		System.out.println("Z是通过set方法注入进来的11111111111111111111111" + this.z);
 		System.out.println("W是通过set方法注入进来的11111111111111111111111" + this.w);
-	}
+	}*/
 
 	/*public H(Z z, W w) {
 		this.z = z;

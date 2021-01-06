@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 @Component
 public class Z {
 
-	// @Autowired
+	@Autowired
 	private H h;
 
 	/*public Z(H h) {
