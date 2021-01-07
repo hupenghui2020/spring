@@ -271,6 +271,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			// Fail if we're already creating this bean instance:
 			// We're assumably within a circular reference.
 			// 3：判断当前的类是不是正在创建的原型集合当中，一般都是 false
+			// 因为原型在处理循环依赖时没有提前暴露工厂方法， 前面的 getSingleton(beanName); 方法获取不到依赖的bean实例
+			// 这里也是为什么原型不能处理循坏依赖的原因
 			if (isPrototypeCurrentlyInCreation(beanName)) {
 				throw new BeanCurrentlyInCreationException(beanName);
 			}

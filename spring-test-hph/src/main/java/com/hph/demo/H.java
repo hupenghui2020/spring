@@ -21,11 +21,9 @@ public class H {
 		System.out.println("W是通过set方法注入进来的11111111111111111111111" + this.w);
 	}*/
 
-	/*public H(Z z, W w) {
+	/*public H(Z z) {
 		this.z = z;
-		this.w = w;
 		System.out.println("构造 H 注入 Z 属性成功！！！" + this.z);
-		System.out.println("构造 H 注入 W 属性成功！！！" + this.w);
 	}*/
 
 	public void print() {

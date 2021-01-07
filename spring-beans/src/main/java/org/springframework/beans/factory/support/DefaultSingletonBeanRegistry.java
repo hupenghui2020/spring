@@ -243,7 +243,8 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				if (logger.isDebugEnabled()) {
 					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
 				}
-				// 4：判断当前正在实例化的 bean 是否存在正在创建的集合当中
+				// 4：判断当前正在实例化的 bean 是否存在正在创建的集合当中,
+				// 也是在这中断了构造方法循环依赖
 				beforeSingletonCreation(beanName);
 				boolean newSingleton = false;
 				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
@@ -374,6 +375,10 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	protected void beforeSingletonCreation(String beanName) {
 		// inCreationCheckExclusions：程序员可以提供一些 bean 不被 spring 初始化（哪怕被扫描到了，也不初始化），那么这些提供的 bean 便会存在这个集合当中
+		// !this.singletonsCurrentlyInCreation.add(beanName) 就是这个条件，导致构造方法循坏依赖解决不了，会抛异常
+
+		// 为啥setter方法的循环依赖不会抛异常？
+		// 因为setter方法的循环依赖在前面的getSingleton方法就获取到了依赖的对象bean，不需要执行到这
 		if (!this.inCreationCheckExclusions.contains(beanName) && !this.singletonsCurrentlyInCreation.add(beanName)) {
 			throw new BeanCurrentlyInCreationException(beanName);
 		}

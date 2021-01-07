@@ -492,6 +492,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Prepare method overrides.
 		try {
 			// 验证及准备覆盖的方法
+			// 之前解析xml的时候是将 lookup-method 和 replace-method两个配置统一存放在methodOverrides 属性中
 			mbdToUse.prepareMethodOverrides();
 		}
 		catch (BeanDefinitionValidationException ex) {
@@ -569,7 +570,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		synchronized (mbd.postProcessingLock) {
 			if (!mbd.postProcessed) {
 				try {
-					// 这里完成属性参数和方法参数的注入
+					// bean 合并后的处理，Autowired注解正是通过此方法实现诸如类型的预解析
 					applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
 				}
 				catch (Throwable ex) {
@@ -586,6 +587,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
 				isSingletonCurrentlyInCreation(beanName));
 		if (earlySingletonExposure) {
+			// 原型的话进不来这里，然后就导致前面的 getSingleton(beanName) 方法在处理循坏依赖时获取不到依赖实例bean
 			if (logger.isTraceEnabled()) {
 				logger.trace("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
