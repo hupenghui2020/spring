@@ -197,7 +197,7 @@ class ConstructorResolver {
 				resolvedValues = new ConstructorArgumentValues();
 				minNrOfArgs = resolveConstructorArguments(beanName, mbd, bw, cargs, resolvedValues);
 			}
-			// 对构造器函数参数个数进行降序
+			// 根据构造器函数参数个数进行降序
 			AutowireUtils.sortConstructors(candidates);
 			int minTypeDiffWeight = Integer.MAX_VALUE;
 			Set<Constructor<?>> ambiguousConstructors = null;
@@ -299,6 +299,7 @@ class ConstructorResolver {
 		}
 
 		Assert.state(argsToUse != null, "Unresolved constructor arguments");
+		// 实例化
 		bw.setBeanInstance(instantiate(beanName, mbd, constructorToUse, argsToUse));
 		return bw;
 	}
@@ -307,6 +308,7 @@ class ConstructorResolver {
 			String beanName, RootBeanDefinition mbd, Constructor<?> constructorToUse, Object[] argsToUse) {
 
 		try {
+			// 获取实例化策略
 			InstantiationStrategy strategy = this.beanFactory.getInstantiationStrategy();
 			if (System.getSecurityManager() != null) {
 				return AccessController.doPrivileged((PrivilegedAction<Object>) () ->
