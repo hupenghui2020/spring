@@ -1192,7 +1192,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
-		// 自动装配的候选构造函数?
+		// 获取自动装配的候选构造器
+		// 多个构造函数的话必须有一个带有注解
 		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
 		if (ctors != null || mbd.getResolvedAutowireMode() == AUTOWIRE_CONSTRUCTOR ||
 				mbd.hasConstructorArgumentValues() || !ObjectUtils.isEmpty(args)) {

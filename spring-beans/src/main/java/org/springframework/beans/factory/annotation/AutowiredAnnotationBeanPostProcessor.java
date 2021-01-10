@@ -312,6 +312,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 							}
 						}
 						if (ann != null) {
+							// 只能有一个 required 属性为true的构造函数
 							if (requiredConstructor != null) {
 								throw new BeanCreationException(beanName,
 										"Invalid autowire-marked constructor: " + candidate +
@@ -324,6 +325,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 							//		有 required 属性，但是值为 true
 							boolean required = determineRequiredStatus(ann);
 							if (required) {
+								// 只能有一个带注解的构造函数
 								if (!candidates.isEmpty()) {
 									throw new BeanCreationException(beanName,
 											"Invalid autowire-marked constructors: " + candidates +
@@ -332,6 +334,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 								}
 								requiredConstructor = candidate;
 							}
+							// candidates 只能存放一个构造函数
 							candidates.add(candidate);
 						}
 						else if (candidate.getParameterCount() == 0) {
@@ -353,6 +356,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 						}
 						candidateConstructors = candidates.toArray(new Constructor<?>[0]);
 					}
+					// 目前只能这个符合条件
 					else if (rawCandidates.length == 1 && rawCandidates[0].getParameterCount() > 0) {
 						candidateConstructors = new Constructor<?>[] {rawCandidates[0]};
 					}
