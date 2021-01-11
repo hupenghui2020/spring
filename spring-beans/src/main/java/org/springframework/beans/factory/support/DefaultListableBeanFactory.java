@@ -1265,7 +1265,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				instanceCandidate = matchingBeans.get(autowiredBeanName);
 			}
 			else {
-				// We have exactly one match.
+				// 找到一个匹配的.
 				Map.Entry<String, Object> entry = matchingBeans.entrySet().iterator().next();
 				autowiredBeanName = entry.getKey();
 				instanceCandidate = entry.getValue();
@@ -1275,7 +1275,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				autowiredBeanNames.add(autowiredBeanName);
 			}
 			if (instanceCandidate instanceof Class) {
-				// 执行完这个方法后，bean 通过构造器注入了属性
+				// 解析为bean实例
 				instanceCandidate = descriptor.resolveCandidate(autowiredBeanName, type, this);
 			}
 			Object result = instanceCandidate;
@@ -1442,6 +1442,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	protected Map<String, Object> findAutowireCandidates(
 			@Nullable String beanName, Class<?> requiredType, DependencyDescriptor descriptor) {
 
+		// 通过类型获取bean name，如果类型是接口的话，可能获取到多个 name
 		String[] candidateNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
 				this, requiredType, true, descriptor.isEager());
 		Map<String, Object> result = new LinkedHashMap<>(candidateNames.length);
@@ -1457,6 +1458,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			}
 		}
 		for (String candidate : candidateNames) {
+			// 当多个候选名时，这里进行判断哪些匹配，校验 @Qualifier 注解
 			if (!isSelfReference(beanName, candidate) && isAutowireCandidate(candidate, descriptor)) {
 				addCandidateEntry(result, candidate, descriptor, requiredType);
 			}

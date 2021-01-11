@@ -455,6 +455,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 			ReflectionUtils.doWithLocalFields(targetClass, field -> {
 				// 找出带 @Autowired、@Value、@Inject 注解的属性
 				AnnotationAttributes ann = findAutowiredAnnotation(field);
+				// 说明属性注入只能带有注解才可以，如果没有带注解的属性，只能去找方法
 				if (ann != null) {
 					// 判断属性是不是静态的
 					if (Modifier.isStatic(field.getModifiers())) {
@@ -634,6 +635,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 			}
 			if (value != null) {
 				ReflectionUtils.makeAccessible(field);
+				// 设置属性值
 				field.set(bean, value);
 			}
 		}

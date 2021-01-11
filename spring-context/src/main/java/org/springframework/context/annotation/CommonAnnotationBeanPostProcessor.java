@@ -511,11 +511,17 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 
 		Object resource;
 		Set<String> autowiredBeanNames;
+		// 直接获取名称，这就是 @Resource 与 @Autowired 区别，
+		// 因为 @Autowired 是没有 name 属性的，通过 @Qualifier 注解获取name，
+		// 所以说 @Autowired 是先通过类型，再通过name进行注入，
+		// 而 @Resource 是先通过名称属性，再通过类型属性
 		String name = element.name;
 
 		if (factory instanceof AutowireCapableBeanFactory) {
 			AutowireCapableBeanFactory beanFactory = (AutowireCapableBeanFactory) factory;
 			DependencyDescriptor descriptor = element.getDependencyDescriptor();
+			// 当通过name属性为空时，就通过类型属性或本身的类型，
+			// element.isDefaultName 条件就会为 true，就会执行里面的代码
 			if (this.fallbackToDefaultTypeMatch && element.isDefaultName && !factory.containsBean(name)) {
 				autowiredBeanNames = new LinkedHashSet<>();
 				resource = beanFactory.resolveDependency(descriptor, requestingBeanName, autowiredBeanNames, null);
