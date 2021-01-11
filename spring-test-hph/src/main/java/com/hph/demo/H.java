@@ -2,6 +2,7 @@ package com.hph.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +14,9 @@ import javax.annotation.Resource;
 @Component
 public class H {
 
-	@Resource(type = Dz.class)
+	// @Resource(type = Dz.class)
 	private Z z;
 
-	// @Resource(name = "dz")
 	private W w;
 
 	/*@Autowired
@@ -35,6 +35,6 @@ public class H {
 	}*/
 
 	public void print() {
-		System.out.println("z----------------：" + z);
+		System.out.println("w----------------：" + w);
 	}
 }
