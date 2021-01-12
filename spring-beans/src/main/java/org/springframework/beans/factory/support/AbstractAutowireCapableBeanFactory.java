@@ -1822,10 +1822,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				}
 			}
 			if (bean instanceof BeanFactoryAware) {
-				/**
-				 * bean 可以通过工厂（Dependency Lookup）来查找所依赖的 bean。 
-				 * 注意，大多数 bean 将选择通过相应的 bean 属性或构造函数参数（依赖注入）来接收对协作 bean 的引用。
-				 */
+				// bean 可以通过工厂（Dependency Lookup）来查找所依赖的 bean。
+				// 注意，大多数 bean 将选择通过相应的 bean 属性或构造函数参数（依赖注入）来接收对协作 bean 的引用。
 				((BeanFactoryAware) bean).setBeanFactory(AbstractAutowireCapableBeanFactory.this);
 			}
 		}
