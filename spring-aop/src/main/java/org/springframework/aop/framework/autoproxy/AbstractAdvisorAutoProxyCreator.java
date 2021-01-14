@@ -91,7 +91,7 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 	 * @see #extendAdvisors
 	 */
 	protected List<Advisor> findEligibleAdvisors(Class<?> beanClass, String beanName) {
-		// 获取所有的通知（带 @Aspect 注解类的带通知的方法）
+		// 获取所有的通知（带 @Aspect 注解类的带通知的方法，非 @Pointcut 注解方法）
 		List<Advisor> candidateAdvisors = findCandidateAdvisors();
 		// 找出能匹配上的通知（通知方法与被代理的类的方法进行匹配，被代理的类的方法包括继承和实现的方法）
 		List<Advisor> eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);

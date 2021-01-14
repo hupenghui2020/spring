@@ -1,6 +1,7 @@
 package com.hph.demo;
 
 import com.hph.demo.aop.AspectService;
+import com.hph.demo.aop.IAspectService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -21,6 +22,6 @@ public class Test {
 		ac.getBean(H.class).print();
 		// ac.getBean(Z.class).print();
 		//ac.getBean(W.class).print();
-		ac.getBean(AspectService.class).testAop();
+		ac.getBean(AspectService.class).testAop1();
 	}
 }
