@@ -862,6 +862,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 		return updateCount(execute(psc, ps -> {
 			try {
 				if (pss != null) {
+					// 设置 PreparedStatement 所需的全部参数
 					pss.setValues(ps);
 				}
 				int rows = ps.executeUpdate();
