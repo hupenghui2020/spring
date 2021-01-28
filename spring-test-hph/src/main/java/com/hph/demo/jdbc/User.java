@@ -1,5 +1,7 @@
 package com.hph.demo.jdbc;
 
+import org.apache.ibatis.type.Alias;
+
 /**
  * @author hph
  */
