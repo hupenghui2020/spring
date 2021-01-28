@@ -2,15 +2,12 @@ package com.hph.demo.jdbc.mybatis;
 
 import com.hph.demo.jdbc.JdbcConfig;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.MapperFactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
-import javax.sql.DataSource;
 
 /**
  * @author hph
@@ -20,10 +17,10 @@ import javax.sql.DataSource;
 public class MybatisSpringConfig {
 
 	@Bean
-	public SqlSessionFactoryBean sqlSessionFactory(DataSource dataSource){
+	public SqlSessionFactoryBean sqlSessionFactory(BasicDataSource dataSource){
 
 		SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
-		sqlSessionFactory.setConfigLocation(new ClassPathResource("com/hph/demo/jdbc/mybatis/mybatis-configuration.xml"));
+		sqlSessionFactory.setConfigLocation(new ClassPathResource("mybatis-configuration.xml"));
 		sqlSessionFactory.setDataSource(dataSource);
 		return sqlSessionFactory;
 	}
