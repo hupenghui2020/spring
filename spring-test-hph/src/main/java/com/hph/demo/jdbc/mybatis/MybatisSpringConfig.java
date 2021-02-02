@@ -16,6 +16,11 @@ import org.springframework.core.io.ClassPathResource;
 @Import(JdbcConfig.class)
 public class MybatisSpringConfig {
 
+	/**
+	 * 相当于提供sql操作的代理对象
+	 * @param dataSource
+	 * @return
+	 */
 	@Bean
 	public SqlSessionFactoryBean sqlSessionFactory(BasicDataSource dataSource){
 
@@ -25,11 +30,17 @@ public class MybatisSpringConfig {
 		return sqlSessionFactory;
 	}
 
+	/**
+	 * 相当于提供sql操作的代理接口
+	 * @param sqlSessionFactory
+	 * @return
+	 * @throws Exception
+	 */
 	@Bean
 	public MapperFactoryBean userMapper(SqlSessionFactoryBean sqlSessionFactory) throws Exception {
 
 		MapperFactoryBean mapperFactoryBean = new MapperFactoryBean();
-		mapperFactoryBean.setMapperInterface(UserMapper.class);
+		//mapperFactoryBean.setMapperInterface(UserMapper.class);
 		mapperFactoryBean.setSqlSessionFactory(sqlSessionFactory.getObject());
 		return mapperFactoryBean;
 	}
