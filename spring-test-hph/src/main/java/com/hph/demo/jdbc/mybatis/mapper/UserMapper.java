@@ -1,4 +1,4 @@
-package com.hph.demo.jdbc.mybatis;
+package com.hph.demo.jdbc.mybatis.mapper;
 
 import com.hph.demo.jdbc.User;
 

@@ -272,42 +272,30 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		Assert.notEmpty(basePackages, "At least one base package must be specified");
 		Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<>();
 		for (String basePackage : basePackages) {
-			/**
-			 * 扫描出指定包路径的所有组件，并解析为 beanDefinition
-			 */
+			// 扫描出指定包路径的所有组件，并解析为 beanDefinition
 			Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
 			for (BeanDefinition candidate : candidates) {
 				ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(candidate);
 				candidate.setScope(scopeMetadata.getScopeName());
-				/**
-				 * 生成 beanName，先从注解的 value 获取，没有的话用类名
-				 * com.hph.demo.xxx  ==>  xxx
-				 */
+				// 生成 beanName，先从注解的 value 获取，没有的话用类名
+				// com.hph.demo.xxx  ==>  xxx
 				String beanName = this.beanNameGenerator.generateBeanName(candidate, this.registry);
 				if (candidate instanceof AbstractBeanDefinition) {
-					/**
-					 * 对 BeanDefinition 进行一些额外的定义，不是在扫描的类里的一些信息
-					 */
+					// 对 BeanDefinition 进行一些额外的定义，不是在扫描的类里的一些信息
 					postProcessBeanDefinition((AbstractBeanDefinition) candidate, beanName);
 				}
 				if (candidate instanceof AnnotatedBeanDefinition) {
-					/**
-					 * 解析注解的其他属性，对 BeanDefinition 进行一些额外的属性填充
-					 * 如：Lazy属性、DependsOn属性、Role属性、Description属性
-					 */
+					// 解析注解的其他属性，对 BeanDefinition 进行一些额外的属性填充
+					// 如：Lazy属性、DependsOn属性、Role属性、Description属性
 					AnnotationConfigUtils.processCommonDefinitionAnnotations((AnnotatedBeanDefinition) candidate);
 				}
-				/**
-				 * 校验是否在 beanDefinitionMap 容器中存在
-				 */
+				// 校验是否在 beanDefinitionMap 容器中存在
 				if (checkCandidate(beanName, candidate)) {
 					BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(candidate, beanName);
 					definitionHolder =
 							AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
 					beanDefinitions.add(definitionHolder);
-					/**
-					 * 进行注册进 beanDefinitionsMap 容器中
-					 */
+					// 进行注册进 beanDefinitionsMap 容器中
 					registerBeanDefinition(definitionHolder, this.registry);
 				}
 			}

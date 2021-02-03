@@ -1,11 +1,10 @@
 package com.hph.demo;
 
-import com.hph.demo.aop.AspectService;
 import com.hph.demo.aop.IAspectService;
 import com.hph.demo.jdbc.User;
 import com.hph.demo.jdbc.UserService;
 import com.hph.demo.jdbc.UserServiceImpl;
-import com.hph.demo.jdbc.mybatis.UserMapper;
+import com.hph.demo.jdbc.mybatis.mapper.UserMapper;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.List;
