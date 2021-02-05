@@ -135,7 +135,7 @@ final class PostProcessorRegistrationDelegate {
 			// BeanDefinitionRegistryPostProcessor 有很多种类的实现类
 			// 这里执行的是 spring 内置的 ConfigurationClassPostProcessor
 			// （因为 spring 内置实现 PriorityOrdered 接口的只有这一个）
-			// 完成了 spring 的扫描
+			// 完成了 spring 的扫描（扫描的类转为beanDefinition）
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			currentRegistryProcessors.clear();
 

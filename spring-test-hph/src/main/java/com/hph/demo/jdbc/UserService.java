@@ -6,5 +6,5 @@ public interface UserService {
 
 	void save(User user);
 
-	List<User> getUsers();
+	User getUser();
 }

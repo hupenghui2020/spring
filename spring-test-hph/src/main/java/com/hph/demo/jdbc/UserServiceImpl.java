@@ -1,8 +1,11 @@
 package com.hph.demo.jdbc;
 
+import com.hph.demo.jdbc.mybatis.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.Types;
 import java.util.List;
@@ -15,6 +18,9 @@ public class UserServiceImpl implements UserService{
 
 	private JdbcTemplate jdbcTemplate;
 
+	@Resource
+	private UserMapper userMapper;
+
 	@Autowired
 	public void setDataSource (DataSource dataSource) {
 
@@ -24,15 +30,17 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public void save(User user) {
 
-		jdbcTemplate.update("insert into user(name,age,sex) values (?,?,?)",
+		userMapper.insertUser(user);
+
+		/*jdbcTemplate.update("insert into user(name,age,sex) values (?,?,?)",
 				new Object[]{user.getName(), user.getAge(), user.getSex()},
-				new int[]{Types.VARCHAR, Types.INTEGER, Types.VARCHAR});
+				new int[]{Types.VARCHAR, Types.INTEGER, Types.VARCHAR});*/
 	}
 
 	@Override
-	public List<User> getUsers() {
+	public User getUser() {
 
-		List<User> list = jdbcTemplate.query("select * from user", new Object[]{}, new UserRowMapper());
-		return list;
+		//List<User> list = jdbcTemplate.query("select * from user", new Object[]{}, new UserRowMapper());
+		return userMapper.getUser("sdawda");
 	}
 }

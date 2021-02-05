@@ -32,8 +32,8 @@ public class Test {
 		UserService userService = ac.getBean(UserServiceImpl.class);
 		User user = new User("sdawda", 20, "fe");
 		userService.save(user);
-		List<User> personl = userService.getUsers();
-		personl.forEach(p -> System.out.println(p.toString()));
+		User personl = userService.getUser();
+		System.out.println(personl.toString());
 		System.out.println("--------------- mybatis 测试 --------------------");
 		UserMapper userMapper = ac.getBean(UserMapper.class);
 		System.out.println(userMapper.getUser("sdawda").toString());
