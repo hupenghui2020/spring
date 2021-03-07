@@ -22,6 +22,7 @@ public class Test {
 		// 容器还未初始化之前把自定义的 bean 放入容器中
 		//ac.getBeanFactory().registerSingleton("y", y);
 		// ac.addBeanFactoryPostProcessor(new ExtraPointTest1());
+		// register只是把bd放入bd的容器中，并不会进行bean实例的创建
 		ac.register(DemoConfig.class);
 		ac.refresh();
 		ac.getBean(H.class).print();
