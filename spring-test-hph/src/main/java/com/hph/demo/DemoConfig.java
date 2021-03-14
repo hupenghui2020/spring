@@ -6,6 +6,6 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author hph
  */
-@ComponentScan("com.hph")
+//@ComponentScan("com.hph")
 public class DemoConfig {
 }
