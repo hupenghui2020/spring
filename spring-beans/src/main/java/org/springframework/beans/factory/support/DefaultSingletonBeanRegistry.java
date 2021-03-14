@@ -245,6 +245,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				}
 				// 4：判断当前正在实例化的 bean 是否存在正在创建的集合当中,
 				// 也是在这中断了构造方法循环依赖
+				// 创建新的实例之前将当前beanName放入singletonsCurrentlyInCreation容器中，表示这个bean正在创建中
 				beforeSingletonCreation(beanName);
 				boolean newSingleton = false;
 				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
@@ -276,6 +277,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					if (recordSuppressedExceptions) {
 						this.suppressedExceptions = null;
 					}
+					// 创建完之后将当前beanName从singletonsCurrentlyInCreation容器中移除
 					afterSingletonCreation(beanName);
 				}
 				if (newSingleton) {

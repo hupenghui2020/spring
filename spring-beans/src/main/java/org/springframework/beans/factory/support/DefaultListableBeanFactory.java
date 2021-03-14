@@ -858,6 +858,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 									((SmartFactoryBean<?>) factory).isEagerInit());
 						}
 						if (isEagerInit) {
+							// 是否是一个 factorybean并且急于初始化，是的话进行初始化
 							getBean(beanName);
 						}
 					}
@@ -935,10 +936,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							"] with [" + beanDefinition + "]");
 				}
 			}
+			// beanDefinitionMap里面有，但是再次put，说明register的时候会覆盖之前的
 			this.beanDefinitionMap.put(beanName, beanDefinition);
 		}
 		else {
 			if (hasBeanCreationStarted()) {
+				// spring正在对bean进行创建中，这里是手动调用注册的方法进行注册，register方法在refresh方法之后执行的情况
 				// Cannot modify startup-time collection elements anymore (for stable iteration)
 				synchronized (this.beanDefinitionMap) {
 					this.beanDefinitionMap.put(beanName, beanDefinition);
@@ -950,6 +953,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				}
 			}
 			else {
+				// register方法在refresh方法之前执行的情况，这时还未开始进行对已扫描的bean进行创建
 				// Still in startup registration phase
 				this.beanDefinitionMap.put(beanName, beanDefinition);
 				this.beanDefinitionNames.add(beanName);

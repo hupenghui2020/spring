@@ -255,6 +255,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		//		2）循环依赖的时候第二次获取对象的时候这里也不等于空
 		if (sharedInstance != null && args == null) {
 			if (logger.isTraceEnabled()) {
+				// 检查singletonsCurrentlyInCreation容器中是否包含beanName，
+				// beanName会在创建之前放入singletonsCurrentlyInCreation容器中
 				if (isSingletonCurrentlyInCreation(beanName)) {
 					logger.trace("Returning eagerly cached instance of singleton bean '" + beanName +
 							"' that is not fully initialized yet - a consequence of a circular reference");
@@ -331,7 +333,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				}
 
 				// Create bean instance.
-				// 4：
+				// 4：创建新的单例实例
 				if (mbd.isSingleton()) {
 					sharedInstance = getSingleton(beanName, () -> {
 						try {
