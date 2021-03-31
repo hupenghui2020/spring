@@ -158,13 +158,17 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	/** Map from dependency type to corresponding autowired value. */
 	private final Map<Class<?>, Object> resolvableDependencies = new ConcurrentHashMap<>(16);
 
-	/** Map of bean definition objects, keyed by bean name. */
+	/**
+	 * 缓存 beanDefinition
+	 * Map of bean definition objects, keyed by bean name. */
 	private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
 
 	/** Map from bean name to merged BeanDefinitionHolder. */
 	private final Map<String, BeanDefinitionHolder> mergedBeanDefinitionHolders = new ConcurrentHashMap<>(256);
 
-	/** Map of singleton and non-singleton bean names, keyed by dependency type. */
+	/**
+	 * 单例和非单例Bean名称的映射，按依赖项类型进行键控。
+	 *  Map of singleton and non-singleton bean names, keyed by dependency type. */
 	private final Map<Class<?>, String[]> allBeanNamesByType = new ConcurrentHashMap<>(64);
 
 	/** Map of singleton-only bean names, keyed by dependency type. */
@@ -483,6 +487,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		return getBeanNamesForType(type, true, true);
 	}
 
+	/**
+	 * 通过依赖的类型获取名称
+	 * （如果依赖的类型是接口，则会获取所有的实现类的名称（实现类的驼峰名称））
+	 * @return
+	 */
 	@Override
 	public String[] getBeanNamesForType(@Nullable Class<?> type, boolean includeNonSingletons, boolean allowEagerInit) {
 		if (!isConfigurationFrozen() || type == null || !allowEagerInit) {
@@ -494,6 +503,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		if (resolvedBeanNames != null) {
 			return resolvedBeanNames;
 		}
+		// 首次需要去找（后面就是走上面的cache）
 		resolvedBeanNames = doGetBeanNamesForType(ResolvableType.forRawClass(type), includeNonSingletons, true);
 		if (ClassUtils.isCacheSafe(type, getBeanClassLoader())) {
 			cache.put(type, resolvedBeanNames);
@@ -805,6 +815,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	public void clearMetadataCache() {
 		super.clearMetadataCache();
 		this.mergedBeanDefinitionHolders.clear();
+		// 通过类型清楚缓存的依赖项
+		// 为什么清除：
 		clearByTypeCache();
 	}
 
@@ -939,10 +951,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			// beanDefinitionMap里面有，但是再次put，说明register的时候会覆盖之前的
 			this.beanDefinitionMap.put(beanName, beanDefinition);
 		}
+		// beanDefinitionMap里面没有
 		else {
+			// 判断spring正在对bean进行创建中
 			if (hasBeanCreationStarted()) {
-				// spring正在对bean进行创建中，这里是手动调用注册的方法进行注册，register方法在refresh方法之后执行的情况
 				// Cannot modify startup-time collection elements anymore (for stable iteration)
+				// spring正在对bean进行创建中，说明这时候spring正在用beanDefinitionMap容器，这时候进行添加beanDefinition的话会有并发问题，所以用 synchronized 进行同步
 				synchronized (this.beanDefinitionMap) {
 					this.beanDefinitionMap.put(beanName, beanDefinition);
 					List<String> updatedDefinitions = new ArrayList<>(this.beanDefinitionNames.size() + 1);
@@ -1446,7 +1460,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	protected Map<String, Object> findAutowireCandidates(
 			@Nullable String beanName, Class<?> requiredType, DependencyDescriptor descriptor) {
 
-		// 通过类型获取bean name，如果类型是接口的话，可能获取到多个 name
+		// 通过类型获取bean name，如果类型是接口的话，可能获取到多个 name（实现类的驼峰名称）
 		String[] candidateNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
 				this, requiredType, true, descriptor.isEager());
 		Map<String, Object> result = new LinkedHashMap<>(candidateNames.length);

@@ -1,10 +1,7 @@
 package com.hph.demo;
 
+import com.hph.demo.beanFactoryPostProcessor.E;
 import com.hph.demo.config.DemoConfig;
-import com.hph.demo.jdbc.User;
-import com.hph.demo.jdbc.UserService;
-import com.hph.demo.jdbc.UserServiceImpl;
-import com.hph.demo.jdbc.mybatis.mapper.UserMapper;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -17,6 +14,7 @@ public class ApplicationTest {
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
 		ac.register(DemoConfig.class);
 		ac.refresh();
+		ac.getBean(E.class).print();
 		// ApplicationContext ac = new ClassPathXmlApplicationContext("application.xml");
 		// 测试jdbc
 		/*UserService userService = ac.getBean(UserServiceImpl.class);

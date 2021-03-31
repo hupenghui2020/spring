@@ -14,5 +14,7 @@ public class BeanFactoryPostProcessorTest implements BeanFactoryPostProcessor {
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+
+		System.out.println("2222222222222222222");
 	}
 }
