@@ -19,13 +19,14 @@ public class ApplicationTest {
 		ac.refresh();
 		// ApplicationContext ac = new ClassPathXmlApplicationContext("application.xml");
 		// 测试jdbc
-		UserService userService = ac.getBean(UserServiceImpl.class);
+		/*UserService userService = ac.getBean(UserServiceImpl.class);
 		User user = new User("sdawda", 20, "fe");
 		userService.save(user);
 		User personl = userService.getUser();
 		System.out.println(personl.toString());
 		System.out.println("--------------- mybatis 测试 --------------------");
 		UserMapper userMapper = ac.getBean(UserMapper.class);
-		System.out.println(userMapper.getUser("sdawda").toString());
+		System.out.println(userMapper.getUser("sdawda").toString());*/
+
 	}
 }

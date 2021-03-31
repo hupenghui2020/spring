@@ -43,7 +43,7 @@ public interface ConfigurableListableBeanFactory
 		extends ListableBeanFactory, AutowireCapableBeanFactory, ConfigurableBeanFactory {
 
 	/**
-	 * 废弃依赖的类型（自动依赖的类型有效）
+	 * 废弃依赖的类型（自动注入的类型有效）
 	 * Ignore the given dependency type for autowiring:
 	 * for example, String. Default is none.
 	 * @param type the dependency type to ignore
@@ -51,6 +51,7 @@ public interface ConfigurableListableBeanFactory
 	void ignoreDependencyType(Class<?> type);
 
 	/**
+	 * 废弃依赖的接口（自动注入的类型有效）
 	 * Ignore the given dependency interface for autowiring.
 	 * <p>This will typically be used by application contexts to register
 	 * dependencies that are resolved in other ways, like BeanFactory through
@@ -64,6 +65,7 @@ public interface ConfigurableListableBeanFactory
 	void ignoreDependencyInterface(Class<?> ifc);
 
 	/**
+	 * 替换注入的类值
 	 * Register a special dependency type with corresponding autowired value.
 	 * <p>This is intended for factory/context references that are supposed
 	 * to be autowirable but are not defined as beans in the factory:
@@ -124,6 +126,7 @@ public interface ConfigurableListableBeanFactory
 	Iterator<String> getBeanNamesIterator();
 
 	/**
+	 * 清除 beanDefinition 的缓存
 	 * Clear the merged bean definition cache, removing entries for beans
 	 * which are not considered eligible for full metadata caching yet.
 	 * <p>Typically triggered after changes to the original bean definitions,
@@ -136,6 +139,7 @@ public interface ConfigurableListableBeanFactory
 	void clearMetadataCache();
 
 	/**
+	 * 冻结
 	 * Freeze all bean definitions, signalling that the registered bean definitions
 	 * will not be modified or post-processed any further.
 	 * <p>This allows the factory to aggressively cache bean definition metadata.
@@ -150,6 +154,7 @@ public interface ConfigurableListableBeanFactory
 	boolean isConfigurationFrozen();
 
 	/**
+	 * 实例化所有的单例bean
 	 * Ensure that all non-lazy-init singletons are instantiated, also considering
 	 * {@link org.springframework.beans.factory.FactoryBean FactoryBeans}.
 	 * Typically invoked at the end of factory setup, if desired.
