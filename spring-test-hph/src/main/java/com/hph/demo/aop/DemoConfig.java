@@ -1,6 +1,6 @@
-package com.hph.demo.config;
+package com.hph.demo.aop;
 
-import com.hph.demo.beanFactoryPostProcessor.ImportBeanDefinitionRegistrarTest;
+import com.hph.demo.importBeanDefinitionRegistrar.ImportBeanDefinitionRegistrarTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
