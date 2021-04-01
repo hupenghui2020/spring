@@ -1,11 +1,11 @@
-package com.hph.demo.beanFactoryPostProcessor;
+package com.hph.demo.importBeanDefinitionRegistrar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class E {
+public class Eibdr {
 
 	@Autowired
-	private B c;
+	private Bibdr c;
 
 	public void print(){
 		System.out.println("xxxxx" + c);

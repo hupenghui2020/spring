@@ -167,7 +167,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	private final Map<String, BeanDefinitionHolder> mergedBeanDefinitionHolders = new ConcurrentHashMap<>(256);
 
 	/**
-	 * 单例和非单例Bean名称的映射，按依赖项类型进行键控。
+	 * 单例和非单例Bean名称的映射，类型是接口的话会对应多个实现类的名称，所以value是String[]
 	 *  Map of singleton and non-singleton bean names, keyed by dependency type. */
 	private final Map<Class<?>, String[]> allBeanNamesByType = new ConcurrentHashMap<>(64);
 
@@ -177,7 +177,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	/** List of bean definition names, in registration order. */
 	private volatile List<String> beanDefinitionNames = new ArrayList<>(256);
 
-	/** List of names of manually registered singletons, in registration order. */
+	/**
+	 * 存放的是手动注册的bean名称（这里的注册不是注册到beanDefinitionMap中，而且直接放到singletonObjects中）
+	 * 有什么用？
+	 * singletonObjects容器中所包含的bean，他们的名称 = beanDefinitionMap 中的名称（从beanDefinition的状态开始注册的） + manualSingletonNames 中名称（直接放进singletonObjects中的）
+	 * 所以。两个集合中的bean名称不能有相同的
+	 * List of names of manually registered singletons, in registration order. */
 	private volatile Set<String> manualSingletonNames = new LinkedHashSet<>(16);
 
 	/** Cached array of bean definition names in case of frozen configuration. */
@@ -963,6 +968,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 					updatedDefinitions.addAll(this.beanDefinitionNames);
 					updatedDefinitions.add(beanName);
 					this.beanDefinitionNames = updatedDefinitions;
+					// 注册的beanDefinition的名字如果有和手动注册的bean的名称集合当中的一个相同，则删除手工注册的
 					removeManualSingletonName(beanName);
 				}
 			}
@@ -1095,8 +1101,14 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		if (hasBeanCreationStarted()) {
 			// Cannot modify startup-time collection elements anymore (for stable iteration)
 			synchronized (this.beanDefinitionMap) {
+				// 判断manualSingletonNames中是否有一个名称和当前正在注册的beanName相同
+				// 或者
+				// 判断beanDefinitionMap中是否不包含有一个名称和当前正在注册的beanName相同
 				if (condition.test(this.manualSingletonNames)) {
 					Set<String> updatedSingletons = new LinkedHashSet<>(this.manualSingletonNames);
+					// 如果相同的话就从manualSingletonNames中移除这个名称
+					// 或者
+					// 如果不包含的话就从manualSingletonNames中添加这个名称
 					action.accept(updatedSingletons);
 					this.manualSingletonNames = updatedSingletons;
 				}

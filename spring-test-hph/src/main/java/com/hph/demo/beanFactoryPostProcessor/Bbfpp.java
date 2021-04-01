@@ -3,5 +3,5 @@ package com.hph.demo.beanFactoryPostProcessor;
 /**
  * @author hph
  */
-public interface B {
+public interface Bbfpp {
 }

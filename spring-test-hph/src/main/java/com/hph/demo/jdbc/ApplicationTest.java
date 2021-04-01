@@ -1,7 +1,8 @@
-package com.hph.demo;
+package com.hph.demo.jdbc;
 
-import com.hph.demo.beanFactoryPostProcessor.E;
-import com.hph.demo.config.DemoConfig;
+import com.hph.demo.beanFactoryPostProcessor.DemoConfig;
+import com.hph.demo.importBeanDefinitionRegistrar.Eibdr;
+import com.hph.demo.beanFactoryPostProcessor.Abfpp;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -13,8 +14,11 @@ public class ApplicationTest {
 
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
 		ac.register(DemoConfig.class);
+		// 直接将实例对象注册到singletonObjects中
+		// ac.getBeanFactory().registerSingleton("d", new D());
 		ac.refresh();
-		ac.getBean(E.class).print();
+		ac.getBean(Eibdr.class).print();
+		ac.getBean(Abfpp.class).print();
 		// ApplicationContext ac = new ClassPathXmlApplicationContext("application.xml");
 		// 测试jdbc
 		/*UserService userService = ac.getBean(UserServiceImpl.class);
