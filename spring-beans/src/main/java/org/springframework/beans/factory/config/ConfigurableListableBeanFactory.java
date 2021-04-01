@@ -139,7 +139,8 @@ public interface ConfigurableListableBeanFactory
 	void clearMetadataCache();
 
 	/**
-	 * 冻结
+	 * 冻结所有的 bean definition
+	 * 说明注册的 bean definition将不被修改或进行进一步的处理（修改beanDefinition中的东西的时候不会有效果）
 	 * Freeze all bean definitions, signalling that the registered bean definitions
 	 * will not be modified or post-processed any further.
 	 * <p>This allows the factory to aggressively cache bean definition metadata.

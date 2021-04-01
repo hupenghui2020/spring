@@ -168,6 +168,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 	/**
 	 * 单例和非单例Bean名称的映射，类型是接口的话会对应多个实现类的名称，所以value是String[]
+	 * （依赖注入的时候用到的缓存，通过类型获取名称，再通过名称从singletonObjects中获取bean）
 	 *  Map of singleton and non-singleton bean names, keyed by dependency type. */
 	private final Map<Class<?>, String[]> allBeanNamesByType = new ConcurrentHashMap<>(64);
 
@@ -820,8 +821,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	public void clearMetadataCache() {
 		super.clearMetadataCache();
 		this.mergedBeanDefinitionHolders.clear();
-		// 通过类型清楚缓存的依赖项
-		// 为什么清除：
+		// 通过类型清除缓存的依赖项
+		// 为什么清除：因为所有的bean注册完后有些缓存不需要了
 		clearByTypeCache();
 	}
 

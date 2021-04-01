@@ -902,7 +902,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Allow for caching all bean definition metadata, not expecting further changes.
 		// 冻结所有的 bean definition
-		// 说明注册的 bean definition将不被修改或进行进一步的处理
+		// 说明注册的 bean definition将不被修改或进行进一步的处理（修改beanDefinition中的东西的时候不会有效果）
 		beanFactory.freezeConfiguration();
 
 		// Instantiate all remaining (non-lazy-init) singletons.
