@@ -1014,6 +1014,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	/**
+	 * 对 beanDefinition 进行合并
 	 * Return a 'merged' BeanDefinition for the given bean name,
 	 * merging a child bean definition with its parent if necessary.
 	 * <p>This {@code getMergedBeanDefinition} considers bean definition
@@ -1242,6 +1243,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	protected RootBeanDefinition getMergedLocalBeanDefinition(String beanName) throws BeansException {
 		// Quick check on the concurrent map first, with minimal locking.
 		RootBeanDefinition mbd = this.mergedBeanDefinitions.get(beanName);
+		// 为什么不会进行合并，敢保证 beanDefinition 没有被修改？
+		// 因为spring直至执行到这个方法期间没有提供对外提供对 beanDefinition 进行修改的 api ，所以敢保证，从而不需要合并
 		if (mbd != null) {
 			return mbd;
 		}

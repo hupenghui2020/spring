@@ -18,10 +18,14 @@ public class BeanFactoryPostProcessorTest implements BeanFactoryPostProcessor {
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
-		ScannedGenericBeanDefinition sb = (ScannedGenericBeanDefinition)beanFactory.getBeanDefinition("abfpp");
+		AbstractBeanDefinition sb = (AbstractBeanDefinition)beanFactory.getBeanDefinition("abfpp");
 		// 通过名称进行自动注入（通过方法名称获取需要注入的依赖，然后通过反射传给set方法参数）
-		 sb.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_NAME);
+		// sb.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_NAME);
 		// 通过类型进行自动注入（通过set方法参数的类型进行注入，和方法名无关）
 		// sb.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
+
+		// 测试 beanDefinition 冻结之后，修改 beanDefinition 的属性是否会生效
+		//beanFactory.freezeConfiguration();
+		sb.setScope(AbstractBeanDefinition.SCOPE_PROTOTYPE);
 	}
 }

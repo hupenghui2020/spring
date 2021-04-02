@@ -8,13 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class Abfpp {
 
-	private Dbfpp bbfpp;
+	public Abfpp() {
 
-	public void setDbfpp(Dbfpp bbfpp) {
-		this.bbfpp = bbfpp;
+		System.out.println("来了老弟！！！");
 	}
 
 	public void print() {
-		System.out.println("dddddddddddddd" + bbfpp);
+		System.out.println("dddddddddddddd");
 	}
 }
