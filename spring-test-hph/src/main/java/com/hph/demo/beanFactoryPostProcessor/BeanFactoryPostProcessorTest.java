@@ -25,7 +25,9 @@ public class BeanFactoryPostProcessorTest implements BeanFactoryPostProcessor {
 		// sb.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
 
 		// 测试 beanDefinition 冻结之后，修改 beanDefinition 的属性是否会生效
-		//beanFactory.freezeConfiguration();
+		beanFactory.freezeConfiguration();
+		// 当冻结后，按理来说设置SCOPE_PROTOTYPE不会生效，abfpp 最终会在 singletonObjects容器中，但是其实没在
+		// （为啥？因为在创建bean之前，会进行一次merged，删除了mergedDefinitions中对应的mergedBeanDefinition，然后被修改的beanDefinition 被合并到mergedDefinitions）
 		sb.setScope(AbstractBeanDefinition.SCOPE_PROTOTYPE);
 	}
 }

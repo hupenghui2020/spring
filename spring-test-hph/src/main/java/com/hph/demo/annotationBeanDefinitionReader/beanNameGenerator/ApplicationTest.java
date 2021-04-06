@@ -14,6 +14,7 @@ public class ApplicationTest {
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
 		ac.setBeanNameGenerator(new CustomBeanNameGenerator());
 		ac.register(Aabdrbg.class, DemoConfig.class);
+		ac.scan("");
 		ac.refresh();
 	}
 }

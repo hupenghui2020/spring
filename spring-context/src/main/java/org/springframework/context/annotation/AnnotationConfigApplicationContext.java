@@ -53,14 +53,8 @@ import org.springframework.util.Assert;
  */
 public class AnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry {
 
-	/**
-	 * 将class解析为beanDefinition
-	 */
 	private final AnnotatedBeanDefinitionReader reader;
 
-	/**
-	 * 扫描class
-	 */
 	private final ClassPathBeanDefinitionScanner scanner;
 
 
