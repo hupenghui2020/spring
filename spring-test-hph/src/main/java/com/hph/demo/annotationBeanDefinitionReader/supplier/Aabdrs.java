@@ -4,9 +4,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
-public class Aabdr {
+public class Aabdrs {
 
-	public Aabdr() {
+	public Aabdrs() {
 
 		System.out.println("xxxxxxxxxxxxxxxx");
 	}

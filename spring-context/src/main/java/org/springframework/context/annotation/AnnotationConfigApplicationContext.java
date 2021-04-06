@@ -53,8 +53,14 @@ import org.springframework.util.Assert;
  */
 public class AnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry {
 
+	/**
+	 * 将class解析为beanDefinition
+	 */
 	private final AnnotatedBeanDefinitionReader reader;
 
+	/**
+	 * 扫描class
+	 */
 	private final ClassPathBeanDefinitionScanner scanner;
 
 
@@ -115,6 +121,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	}
 
 	/**
+	 * 设置自定义的 beanName 生成策略
 	 * Provide a custom {@link BeanNameGenerator} for use with {@link AnnotatedBeanDefinitionReader}
 	 * and/or {@link ClassPathBeanDefinitionScanner}, if any.
 	 * <p>Default is {@link org.springframework.context.annotation.AnnotationBeanNameGenerator}.
@@ -125,7 +132,11 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 */
 	public void setBeanNameGenerator(BeanNameGenerator beanNameGenerator) {
 		this.reader.setBeanNameGenerator(beanNameGenerator);
+		// 这个scanner只对非@Configuration注解扫描的bean有效
 		this.scanner.setBeanNameGenerator(beanNameGenerator);
+
+		// 如果这里不进行设置的话，@ComponentScan注解扫描的bean将不会用自定义的beanName生成策略
+		// 为什么？因为@ComponentScan注解扫描的bean用的是另外new的scanner，和上面的this.scanner不一样，这也解释了上面
 		getBeanFactory().registerSingleton(
 				AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR, beanNameGenerator);
 	}

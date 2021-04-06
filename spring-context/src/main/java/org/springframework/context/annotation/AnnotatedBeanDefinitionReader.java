@@ -214,6 +214,7 @@ public class AnnotatedBeanDefinitionReader {
 	}
 
 	/**
+	 * 一个类转变成beanDefinition对象的过程
 	 * Register a bean from the given bean class, deriving its metadata from
 	 * class-declared annotations.
 	 * @param beanClass the class of the bean
@@ -233,8 +234,9 @@ public class AnnotatedBeanDefinitionReader {
 		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
 			return;
 		}
-
+		// 设置一个 supplier，用于实例化bean（相当于静态工厂方法）
 		abd.setInstanceSupplier(instanceSupplier);
+		// 分析作用域
 		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
 		abd.setScope(scopeMetadata.getScopeName());
 		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));

@@ -13,8 +13,8 @@ public class ApplicationTest {
 
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
 		ac.register(DemoConfig.class);
-		RootBeanDefinition rb = new RootBeanDefinition(Aabdr.class);
-		rb.setInstanceSupplier(Cabdr::createA);
+		RootBeanDefinition rb = new RootBeanDefinition(Aabdrs.class);
+		rb.setInstanceSupplier(Cabdrs::createA);
 		ac.registerBeanDefinition("aaa", rb);
 		ac.refresh();
 	}
