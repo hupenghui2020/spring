@@ -55,10 +55,20 @@ public class AnnotatedBeanDefinitionReader {
 
 	private final BeanDefinitionRegistry registry;
 
+	/**
+	 * 生成bean name的策略
+	 */
 	private BeanNameGenerator beanNameGenerator = new AnnotationBeanNameGenerator();
 
+	/**
+	 * 处理scope注解的
+	 * 解析scope元数据
+	 */
 	private ScopeMetadataResolver scopeMetadataResolver = new AnnotationScopeMetadataResolver();
 
+	/**
+	 * 处理condition注解的
+	 */
 	private ConditionEvaluator conditionEvaluator;
 
 

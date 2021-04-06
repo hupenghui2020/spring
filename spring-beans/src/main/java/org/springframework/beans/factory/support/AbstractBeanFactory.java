@@ -302,11 +302,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 			// 如果不是仅仅做类型检查，而是创建bean，这里要进行记录
 			if (!typeCheckOnly) {
+				// 同时会清除 mergedBeanDefinitions 中的 beanName，以防下面对bean进行创建的时候beanDefinition是已经被修改的
+				// （就是说mergedBeanDefinition不是最新的，需要重新merged）
 				markBeanAsCreated(beanName);
 			}
 
 			try {
-				// 将存储XML配置文件的 GernericBeanDefinition 转换为 RootBeanDefinition，
 				// 如果bean与其它bean存在父子关系的话，则合并父类的相关属性（）
 				RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
 				checkMergedBeanDefinition(mbd, beanName, args);
@@ -1244,7 +1245,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// Quick check on the concurrent map first, with minimal locking.
 		RootBeanDefinition mbd = this.mergedBeanDefinitions.get(beanName);
 		// 为什么不会进行合并，敢保证 beanDefinition 没有被修改？
-		// 因为spring直至执行到这个方法期间没有提供对外提供对 beanDefinition 进行修改的 api ，所以敢保证，从而不需要合并
+		// 因为spring直至执行到这个方法期间没有对外提供对 beanDefinition 进行修改的 api ，所以敢保证，从而不需要合并
 		if (mbd != null) {
 			return mbd;
 		}
