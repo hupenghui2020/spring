@@ -1,4 +1,4 @@
-package com.hph.demo.beanFactoryPostProcessor;
+package com.hph.demo.beanFactoryPostProcessor.freezeConfiguration;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
