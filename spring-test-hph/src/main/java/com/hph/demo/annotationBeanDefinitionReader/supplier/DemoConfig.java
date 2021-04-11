@@ -7,4 +7,5 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @ComponentScan("com.hph.demo.annotationBeanDefinitionReader")
 public class DemoConfig {
+
 }
