@@ -1,8 +1,8 @@
 package com.hph.demo.jdbc;
 
-import com.hph.demo.beanFactoryPostProcessor.DemoConfig;
+import com.hph.demo.beanFactoryPostProcessor.freezeConfiguration.DemoConfig;
 import com.hph.demo.importBeanDefinitionRegistrar.Eibdr;
-import com.hph.demo.beanFactoryPostProcessor.Abfpp;
+import com.hph.demo.beanFactoryPostProcessor.freezeConfiguration.Abfpp;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**

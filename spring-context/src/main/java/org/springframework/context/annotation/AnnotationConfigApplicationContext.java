@@ -63,8 +63,9 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
 	 */
 	public AnnotationConfigApplicationContext() {
-		// 完成 spring 内置的 bd 的注册
+		// 完成 spring 内置通过注解方式注册的 bd（这个reader只是用来处理注解的类的，像xml的配置方式不会用这个，这个是spring后面为了处理注解方式的类而做的扩展）
 		this.reader = new AnnotatedBeanDefinitionReader(this);
+		// 这个扫描器只是用来调用scan方法用的，用于程序员自定义扩展用的，平常spring用的是new一个新的
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 

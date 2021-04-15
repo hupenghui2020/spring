@@ -1,8 +1,10 @@
 package com.hph.demo.mergedBeanDefinition;
 
+import org.springframework.stereotype.Component;
+
 public class Bmbd {
 
-	public Bmbd() {
-		System.out.println("生成Bmbd对象");
+	static{
+		System.out.println("33333333333333");
 	}
 }
