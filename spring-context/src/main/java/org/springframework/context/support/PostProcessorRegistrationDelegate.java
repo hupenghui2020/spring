@@ -183,7 +183,11 @@ final class PostProcessorRegistrationDelegate {
 
 			// Finally, invoke all other BeanDefinitionRegistryPostProcessors until no further ones appear.
 			// 这里为什么用while循坏呢？
-			//（因为）
+			//（因为执行postProcessBeanDefinitionRegistry方法的时候可能会注册新的实现了BeanDefinitionRegistryPostProcessor接口的Bean）
+
+			// 但是为什么上面执行postProcessBeanDefinitionRegistry方法的时候不使用while呢？
+			// 因为上面的是有排序的，如果执行的中间新注册的优先级比已经执行了的bean搞的话，那么这就不符合spring的设计了，
+			// 		所以spring如果有那种情况的话，会直接在下面进行执行，这也就解释了在实现了Ordered类里注册一个实现了PriorityOrdered类的bean，方法会在下面执行
 			boolean reiterate = true;
 			while (reiterate) {
 				reiterate = false;
