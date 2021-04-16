@@ -65,6 +65,7 @@ final class PostProcessorRegistrationDelegate {
 	 * 	1、直接是实现了 BeanFactoryPostProcessor
 	 * 	2、实现了 BeanDefinitionRegistryPostProcessor
 	 * }
+	 * 注意：下面注释所说的 ‘程序员添加’ 和 ‘程序员自定义注册’ 是两钟方式
 	 * @param beanFactory
 	 * @param beanFactoryPostProcessors
 	 */
@@ -94,12 +95,17 @@ final class PostProcessorRegistrationDelegate {
 			// 先执行实现了 BeanDefinitionRegistryPostProcessor 接口的
 			// 这里先执行程序员自己添加的
 			// （beanFactoryPostProcessors是通过参数传过来的，也就是程序员通过BeanFactory 的 addBeanFactoryPostProcessor 方法进行添加的）
+			// 为什么先执行程序员添加的？
+			// （为什么先执行程序员添加的，而且是实现了BeanDefinitionRegistryPostProcessor 接口的类的postProcessBeanDefinitionRegistry方法？
+			//（因为postProcessBeanDefinitionRegistry方法提供一个BeanDefinitionRegistry类型参数，这个参数可以手动注册bean，而不需要进行扫描进行注册））
 			for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
 				if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
 					BeanDefinitionRegistryPostProcessor registryProcessor =
 							(BeanDefinitionRegistryPostProcessor) postProcessor;
 					// 处理程序员手动添加的实现了 BeanDefinitionRegistryPostProcessor 接口的类的 postProcessBeanDefinitionRegistry 方法
 					registryProcessor.postProcessBeanDefinitionRegistry(registry);
+					// 为什么还要保存起来？
+					//（因为后面还需要执行父类的postProcessBeanFactory方法）
 					registryProcessors.add(registryProcessor);
 				}
 				else {
@@ -119,6 +125,11 @@ final class PostProcessorRegistrationDelegate {
 			// 1、直接是实现了 BeanFactoryPostProcessor
 			// 2、实现了 BeanDefinitionRegistryPostProcessor
 			// 上面两种 BeanFactoryPostProcessor 从源码级别来看它是先执行第二种
+
+			// 正常情况下，这里符合条件的类只有一个，那就是ConfigurationClassPostProcessor，这个类是完成spring的扫描的
+			// （为什么说是正常情况下？因为不考虑执行程序员手动添加的实现了 BeanDefinitionRegistryPostProcessor
+			// 接口的类的postProcessBeanDefinitionRegistry方法的话，没有地方有对符合这种要求的类进行注册的了，
+			// spring也只注册了ConfigurationClassPostProcessor一个）
 			List<BeanDefinitionRegistryPostProcessor> currentRegistryProcessors = new ArrayList<>();
 
 			// First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
@@ -151,7 +162,8 @@ final class PostProcessorRegistrationDelegate {
 			// 再加上扫描出程序员自定义注册的 BeanDefinitionRegistryPostProcessor
 			// （注意：这里的是程序员自定义的，并由spring进行注册的，和上面程序员添加的不同）
 			// 为什么上面调用getBeanNamesForType拿不到程序员自定义的呢，而这里可以拿到？
-			// 因为上面注册后，在beanDefinitionMap容器中有，然后这里调用getBeanNamesForType就能拿到
+			// (2个原因：1、因为上面注册后，在beanDefinitionMap容器中有，然后这里调用getBeanNamesForType就能拿到；
+			// 	2、上面调用postProcessBeanDefinitionRegistry方法可能会手动注册一个bean，调用getBeanNamesForType保证拿全）
 			postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
 			for (String ppName : postProcessorNames) {
 				// 判断是否没被处理并且实现了Ordered接口
@@ -170,6 +182,8 @@ final class PostProcessorRegistrationDelegate {
 			currentRegistryProcessors.clear();
 
 			// Finally, invoke all other BeanDefinitionRegistryPostProcessors until no further ones appear.
+			// 这里为什么用while循坏呢？
+			//（因为）
 			boolean reiterate = true;
 			while (reiterate) {
 				reiterate = false;
@@ -241,9 +255,12 @@ final class PostProcessorRegistrationDelegate {
 				priorityOrderedPostProcessors.add(beanFactory.getBean(ppName, BeanFactoryPostProcessor.class));
 			}
 			else if (beanFactory.isTypeMatch(ppName, Ordered.class)) {
+				// 这里为什么不像上面一样直接添加bean呢？
+				// 个人猜测是上面执行postProcessBeanFactory方法后可能会改变beanDefinition的属性，从而merged后获取的bean实例会不一样
 				orderedPostProcessorNames.add(ppName);
 			}
 			else {
+				// 这里也是
 				nonOrderedPostProcessorNames.add(ppName);
 			}
 		}
@@ -269,6 +286,7 @@ final class PostProcessorRegistrationDelegate {
 
 		// Clear cached merged bean definitions since the post-processors might have
 		// modified the original metadata, e.g. replacing placeholders in values...
+		// 清除已缓存的mergedBeanDefinitions，因为上面执行的一系列方法可能会修改原始元数据（也就是beanDefinition），后面需要重新再merged一次
 		beanFactory.clearMetadataCache();
 	}
 

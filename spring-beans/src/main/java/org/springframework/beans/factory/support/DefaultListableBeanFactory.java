@@ -820,6 +820,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	@Override
 	public void clearMetadataCache() {
 		// 清除没有被创建的bean的 mergedBeanDefinition
+		// （为什么呢？ 因为bean已经被创建了的话就不用关心beanDefinition是否已被修改，这时候用的mergedBeanDefinition已经是最新的了）
 		super.clearMetadataCache();
 		this.mergedBeanDefinitionHolders.clear();
 		// 通过类型清除缓存的依赖项名称
