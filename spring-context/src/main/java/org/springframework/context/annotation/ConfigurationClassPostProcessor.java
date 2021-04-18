@@ -215,6 +215,20 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 
 	/**
 	 * Derive further bean definitions from the configuration classes in the registry.
+	 *
+	 * 最重要的方法
+	 * 1、完成了扫描
+	 * 2、对配置的定义，完成对配置类的标志
+	 * 3、对 @Import 注解的处理
+	 * 		3.1 @ImportSelector
+	 * 		3.2 ImportBeanDefinitionRegistrar
+	 * 		3.3 就是一个普通类
+	 * 			3.3.1 没有任何特殊注解
+	 * 			3.3.2 加了 @Import
+	 * 		3.4	@ImportResource
+	 * 4、@bean 方法的处理
+	 * 5、接口当中的 @bean 方法的处理
+	 * 6、@PropertySource 的处理
 	 */
 	@Override
 	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
