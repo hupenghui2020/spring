@@ -824,7 +824,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		super.clearMetadataCache();
 		this.mergedBeanDefinitionHolders.clear();
 		// 通过类型清除缓存的依赖项名称
-		// 为什么清除：
+		// 为什么清除：主要是为了注入的缓存（当A注入B的时候，第一次进行缓存，后面C注入B的时候就可以直接通过类型获取名称了，然后通过名称获取bean实例了）
 		clearByTypeCache();
 	}
 

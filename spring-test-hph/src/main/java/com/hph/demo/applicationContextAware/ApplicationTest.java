@@ -2,12 +2,16 @@ package com.hph.demo.applicationContextAware;
 
 import com.hph.demo.importBeanDefinitionRegistrar.Eibdr;
 import com.hph.demo.beanFactoryPostProcessor.freezeConfiguration.Abfpp;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * @author hph
  */
 public class ApplicationTest {
+
+	@Autowired
+	private ApplicationContextAwareTest applicationContextAwareTest;
 
 	public static void main(String[] args) {
 
@@ -16,8 +20,7 @@ public class ApplicationTest {
 		// 直接将实例对象注册到singletonObjects中
 		// ac.getBeanFactory().registerSingleton("d", new D());
 		ac.refresh();
-		ac.getBean(Eibdr.class).print();
-		ac.getBean(Abfpp.class).print();
+		System.out.println();
 		// ApplicationContext ac = new ClassPathXmlApplicationContext("application.xml");
 		// 测试jdbc
 		/*UserService userService = ac.getBean(UserServiceImpl.class);

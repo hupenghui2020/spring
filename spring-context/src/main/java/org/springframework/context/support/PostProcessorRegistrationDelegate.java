@@ -260,7 +260,7 @@ final class PostProcessorRegistrationDelegate {
 			}
 			else if (beanFactory.isTypeMatch(ppName, Ordered.class)) {
 				// 这里为什么不像上面一样直接添加bean呢？
-				// 个人猜测是上面执行postProcessBeanFactory方法后可能会改变beanDefinition的属性，从而merged后获取的bean实例会不一样
+				// （因为上面执行postProcessBeanFactory方法后可能会改变beanDefinition的属性，下面getBean的时候会进行merged，保证属性是最新的）
 				orderedPostProcessorNames.add(ppName);
 			}
 			else {
