@@ -197,6 +197,7 @@ class ConfigurationClassParser {
 	}
 
 	protected final void parse(AnnotationMetadata metadata, String beanName) throws IOException {
+		// ConfigurationClass：用来抽象一个配置类
 		processConfigurationClass(new ConfigurationClass(metadata, beanName));
 	}
 

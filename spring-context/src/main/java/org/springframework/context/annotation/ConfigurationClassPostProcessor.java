@@ -220,8 +220,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	 * 1、完成了扫描
 	 * 2、对配置的定义，完成对配置类的标志
 	 * 3、对 @Import 注解的处理
-	 * 		3.1 @ImportSelector
-	 * 		3.2 ImportBeanDefinitionRegistrar
+	 * 		3.1 @ImportSelector -- 应用场景（spring boot）
+	 * 		3.2 ImportBeanDefinitionRegistrar -- 应用场景（mybatis）
 	 * 		3.3 就是一个普通类
 	 * 			3.3.1 没有任何特殊注解
 	 * 			3.3.2 加了 @Import
@@ -229,6 +229,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	 * 4、@bean 方法的处理
 	 * 5、接口当中的 @bean 方法的处理
 	 * 6、@PropertySource 的处理
+	 * 7、配置类里的内部类的注解
+	 * 8、父类的处理
 	 */
 	@Override
 	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
@@ -249,6 +251,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	/**
 	 * Prepare the Configuration classes for servicing bean requests at runtime
 	 * by replacing them with CGLIB-enhanced subclasses.
+	 *
+	 * 将全配置类进行实例化代理
 	 */
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
@@ -263,7 +267,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			// Simply call processConfigurationClasses lazily at this point then.
 			processConfigBeanDefinitions((BeanDefinitionRegistry) beanFactory);
 		}
-
+		// 增强配置类（进行代理）
 		enhanceConfigurationClasses(beanFactory);
 		beanFactory.addBeanPostProcessor(new ImportAwareBeanPostProcessor(beanFactory));
 	}
@@ -273,14 +277,17 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	 * {@link Configuration} classes.
 	 */
 	public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
+
+		// 存储配置类（因为配置类会有多个）
 		List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
 		String[] candidateNames = registry.getBeanDefinitionNames();
 
+		// 所有的配置类的前提是存在 beanDefinitionMap 中
 		for (String beanName : candidateNames) {
 			BeanDefinition beanDef = registry.getBeanDefinition(beanName);
 			// 判断当前的 BeanDefinition 所描述的 bean 所对应的的类是不是一个配置类
 			// 如果它是一个配置类，那么它究竟是什么样的配置
-			// 1、FullConfiguration 配置类
+			// 1、FullConfiguration 配置类 （全配置类在后面进行实例化的时候都会被CGLIB进行代理）
 			// 2、LiteConfiguration 半配置类
 			// 3、不是一个配置类
 			if (ConfigurationClassUtils.isFullConfigurationClass(beanDef) ||
@@ -349,6 +356,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						registry, this.sourceExtractor, this.resourceLoader, this.environment,
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
+			// 对已经解析的配置类进行处理
 			this.reader.loadBeanDefinitions(configClasses);
 			// 已经被解析的
 			alreadyParsed.addAll(configClasses);
@@ -397,6 +405,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		Map<String, AbstractBeanDefinition> configBeanDefs = new LinkedHashMap<>();
 		for (String beanName : beanFactory.getBeanDefinitionNames()) {
 			BeanDefinition beanDef = beanFactory.getBeanDefinition(beanName);
+			// 判断是否为全配置类
 			if (ConfigurationClassUtils.isFullConfigurationClass(beanDef)) {
 				if (!(beanDef instanceof AbstractBeanDefinition)) {
 					throw new BeanDefinitionStoreException("Cannot enhance @Configuration bean definition '" +
@@ -408,6 +417,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 							"is a non-static @Bean method with a BeanDefinitionRegistryPostProcessor " +
 							"return type: Consider declaring such methods as 'static'.");
 				}
+				// 放入 configBeanDefs 中
 				configBeanDefs.put(beanName, (AbstractBeanDefinition) beanDef);
 			}
 		}
@@ -416,15 +426,19 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			return;
 		}
 
+		// 增强器
 		ConfigurationClassEnhancer enhancer = new ConfigurationClassEnhancer();
 		for (Map.Entry<String, AbstractBeanDefinition> entry : configBeanDefs.entrySet()) {
 			AbstractBeanDefinition beanDef = entry.getValue();
 			// If a @Configuration class gets proxied, always proxy the target class
+			// key：value 格式：
+			//	org.springframework.aop.framework.autoproxy.AutoProxyUtils.preserveTargetClass:true
 			beanDef.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE);
 			try {
 				// Set enhanced subclass of the user-specified bean class
 				Class<?> configClass = beanDef.resolveBeanClass(this.beanClassLoader);
 				if (configClass != null) {
+					// 创建代理对象，进行 CGLIB 代理增强
 					Class<?> enhancedClass = enhancer.enhance(configClass, this.beanClassLoader);
 					if (configClass != enhancedClass) {
 						if (logger.isTraceEnabled()) {

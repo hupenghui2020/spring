@@ -117,14 +117,20 @@ abstract class ConfigurationClassUtils {
 		// 确定是否是全配置类
 		// 直接判断是否加了 @Configuration 注解
 		if (isFullConfigurationCandidate(metadata)) {
-			// key值可以说是随便取的
-			// CONFIGURATION_CLASS_ATTRIBUTE:
-			//	org.springframework.context.annotation.ConfigurationClassPostProcessor.configurationClass
+			// key:value 格式如下
+			//	org.springframework.context.annotation.ConfigurationClassPostProcessor.configurationClass：full
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
 		}
+		// 是否为半配置类
+		// 	存在以下典型的注解：
+		//		@Component
+		//		@ComponentScan
+		//		@Import
+		//		@ImportResource
+		// 	或者方法上有 @Bean 注解
 		else if (isLiteConfigurationCandidate(metadata)) {
-			// CONFIGURATION_CLASS_ATTRIBUTE
-			//	org.springframework.context.annotation.ConfigurationClassPostProcessor.configurationClass
+			// key:value 格式如下
+			//	org.springframework.context.annotation.ConfigurationClassPostProcessor.configurationClass：lite
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
 		}
 		// 非配置类
@@ -133,6 +139,7 @@ abstract class ConfigurationClassUtils {
 		}
 
 		// It's a full or lite configuration candidate... Let's determine the order value, if any.
+		// 如果还存在@Order注解的话
 		Integer order = getOrder(metadata);
 		if (order != null) {
 			beanDef.setAttribute(ORDER_ATTRIBUTE, order);
