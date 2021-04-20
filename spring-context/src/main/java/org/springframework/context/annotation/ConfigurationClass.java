@@ -57,7 +57,8 @@ final class ConfigurationClass {
 	private String beanName;
 
 	/**
-	 * @Import 注解里面导入的类（普通类）
+	 * 存放的类
+	 *  1、如果一个配置里面有多个内部类，且内部类为配置类，则 importedBy 存放的是外部类
 	 */
 	private final Set<ConfigurationClass> importedBy = new LinkedHashSet<>(1);
 

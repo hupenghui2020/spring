@@ -1,4 +1,4 @@
-package com.hph.demo.beanDefinitionRegistryPostProcessor;
+package com.hph.demo.beanDefinitionRegistryPostProcessor.priorityOrdered;
 
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
