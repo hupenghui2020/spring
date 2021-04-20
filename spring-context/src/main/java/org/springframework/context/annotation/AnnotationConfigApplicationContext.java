@@ -126,12 +126,13 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * @see ClassPathBeanDefinitionScanner#setBeanNameGenerator
 	 */
 	public void setBeanNameGenerator(BeanNameGenerator beanNameGenerator) {
+
 		this.reader.setBeanNameGenerator(beanNameGenerator);
-		// 这个scanner只对非@Configuration注解扫描的bean有效
+		// 这个scanner只对直接调用 scan api扫描的bean有效，正常情况下，比如执行refresh的时候，会重新new一个
 		this.scanner.setBeanNameGenerator(beanNameGenerator);
 
-		// 如果这里不进行设置的话，@ComponentScan注解扫描的bean将不会用自定义的beanName生成策略
-		// 为什么？因为@ComponentScan注解扫描的bean用的是另外new的scanner，和上面的this.scanner不一样，这也解释了上面
+		// 上面已经对scanner设置了BeanNameGenerator，这里还要进行注册，为什么？
+		// （因为执行refresh方法进行扫描使用的扫描器是一个新的，新的扫描器传入的BeanNameGenerator会从spring容器中拿）
 		getBeanFactory().registerSingleton(
 				AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR, beanNameGenerator);
 	}

@@ -220,7 +220,7 @@ class ConfigurationClassParser {
 		if (this.conditionEvaluator.shouldSkip(configClass.getMetadata(), ConfigurationPhase.PARSE_CONFIGURATION)) {
 			return;
 		}
-
+		//
 		ConfigurationClass existingClass = this.configurationClasses.get(configClass);
 		if (existingClass != null) {
 			if (configClass.isImported()) {
@@ -239,9 +239,12 @@ class ConfigurationClassParser {
 		}
 
 		// Recursively process the configuration class and its superclass hierarchy.
-		// 递归处理配置类及其超类层次结构。
+		// 可以理解为当前类的元数据信息
 		SourceClass sourceClass = asSourceClass(configClass);
 		do {
+			// 该方法就是将当前类的元数据信息解析并填充到 configClass 对象
+			// configClass：方法中会对该参数进行初始化（即填充属性）
+			// sourceClass：需要被解析的元数据信息
 			sourceClass = doProcessConfigurationClass(configClass, sourceClass);
 		}
 		while (sourceClass != null);
@@ -263,10 +266,13 @@ class ConfigurationClassParser {
 
 		if (configClass.getMetadata().isAnnotated(Component.class.getName())) {
 			// Recursively process any member (nested) classes first
+			// 首先处理内部类
 			processMemberClasses(configClass, sourceClass);
 		}
 
 		// Process any @PropertySource annotations
+		// 处理 @PropertySources 注解和 @PropertySource 注解
+		// 该注解用于指定配置文件（AnnotationAttributes相当于一个@PropertySource 注解的元数据）
 		for (AnnotationAttributes propertySource : AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), PropertySources.class,
 				org.springframework.context.annotation.PropertySource.class)) {
@@ -280,6 +286,7 @@ class ConfigurationClassParser {
 		}
 
 		// Process any @ComponentScan annotations
+		// 处理 @ComponentScans 注解和 @ComponentScan 注解
 		Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
 		if (!componentScans.isEmpty() &&
@@ -348,18 +355,23 @@ class ConfigurationClassParser {
 	 * Register member (nested) classes that happen to be configuration classes themselves.
 	 */
 	private void processMemberClasses(ConfigurationClass configClass, SourceClass sourceClass) throws IOException {
+
+		// 当前类里面有几个内部类
 		Collection<SourceClass> memberClasses = sourceClass.getMemberClasses();
 		if (!memberClasses.isEmpty()) {
 			List<SourceClass> candidates = new ArrayList<>(memberClasses.size());
 			for (SourceClass memberClass : memberClasses) {
+				// 判断当前内部类是否是一个配置类
 				if (ConfigurationClassUtils.isConfigurationCandidate(memberClass.getMetadata()) &&
 						!memberClass.getMetadata().getClassName().equals(configClass.getMetadata().getClassName())) {
 					candidates.add(memberClass);
 				}
 			}
 			OrderComparator.sort(candidates);
+			// 遍历每个内部类
 			for (SourceClass candidate : candidates) {
 				if (this.importStack.contains(configClass)) {
+					// 循环import，抛异常
 					this.problemReporter.error(new CircularImportProblem(configClass, this.importStack));
 				}
 				else {
@@ -454,8 +466,11 @@ class ConfigurationClassParser {
 
 		for (String location : locations) {
 			try {
+				// 获取已经被解析的环境配置路径
 				String resolvedLocation = this.environment.resolveRequiredPlaceholders(location);
+				// 加载进来
 				Resource resource = this.resourceLoader.getResource(resolvedLocation);
+				//
 				addPropertySource(factory.createPropertySource(name, new EncodedResource(resource, encoding)));
 			}
 			catch (IllegalArgumentException | FileNotFoundException | UnknownHostException | SocketException ex) {
@@ -474,12 +489,16 @@ class ConfigurationClassParser {
 
 	private void addPropertySource(PropertySource<?> propertySource) {
 		String name = propertySource.getName();
+		// 所有的环境变量配置资源
 		MutablePropertySources propertySources = ((ConfigurableEnvironment) this.environment).getPropertySources();
 
+		// propertySourceNames ： 所有的配置资源名称
 		if (this.propertySourceNames.contains(name)) {
 			// We've already added a version, we need to extend it
+			// 处理一个注解里引用多个配置路径的情况
 			PropertySource<?> existing = propertySources.get(name);
 			if (existing != null) {
+				// ResourcePropertySource：配置文件提供的配置
 				PropertySource<?> newSource = (propertySource instanceof ResourcePropertySource ?
 						((ResourcePropertySource) propertySource).withResourceName() : propertySource);
 				if (existing instanceof CompositePropertySource) {
@@ -489,6 +508,7 @@ class ConfigurationClassParser {
 					if (existing instanceof ResourcePropertySource) {
 						existing = ((ResourcePropertySource) existing).withResourceName();
 					}
+					// 所以当一个注解里引用了多个配置文件路径的时候，会使用CompositePropertySource类型的对象进行存储
 					CompositePropertySource composite = new CompositePropertySource(name);
 					composite.addPropertySource(newSource);
 					composite.addPropertySource(existing);
@@ -502,7 +522,9 @@ class ConfigurationClassParser {
 			propertySources.addLast(propertySource);
 		}
 		else {
+			// 获取最后一个配置资源名称
 			String firstProcessed = this.propertySourceNames.get(this.propertySourceNames.size() - 1);
+			// 将资源添加到propertySourceList中，并在名称为firstProcessed的前面
 			propertySources.addBefore(firstProcessed, propertySource);
 		}
 		this.propertySourceNames.add(name);

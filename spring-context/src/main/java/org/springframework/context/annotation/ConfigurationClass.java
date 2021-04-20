@@ -57,16 +57,24 @@ final class ConfigurationClass {
 	private String beanName;
 
 	/**
-	 * 当前类被 @Import 注解导入的，
-	 * 容器中存储的是用 @Import 注解导入这个类的类
+	 * @Import 注解里面导入的类（普通类）
 	 */
 	private final Set<ConfigurationClass> importedBy = new LinkedHashSet<>(1);
 
+	/**
+	 * 类里面的 @Bean 方法
+	 */
 	private final Set<BeanMethod> beanMethods = new LinkedHashSet<>();
 
+	/**
+	 * @ImportResource 注解
+	 */
 	private final Map<String, Class<? extends BeanDefinitionReader>> importedResources =
 			new LinkedHashMap<>();
 
+	/**
+	 * 处理@Import注解 import了多少个实现了 ImportBeanDefinitionRegistrar 接口的类
+	 */
 	private final Map<ImportBeanDefinitionRegistrar, AnnotationMetadata> importBeanDefinitionRegistrars =
 			new LinkedHashMap<>();
 
