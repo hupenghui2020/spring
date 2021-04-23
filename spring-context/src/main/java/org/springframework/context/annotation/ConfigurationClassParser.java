@@ -296,10 +296,7 @@ class ConfigurationClassParser {
 				!this.conditionEvaluator.shouldSkip(sourceClass.getMetadata(), ConfigurationPhase.REGISTER_BEAN)) {
 			for (AnnotationAttributes componentScan : componentScans) {
 				// The config class is annotated with @ComponentScan -> perform the scan immediately
-				/**
-				 * 扫描 @ComponentScan 注解 value 属性下指定的包路径的所有类，
-				 * 并解析为 BeanDefinitionHolder，并注册到 BeanDefinitionMap 容器中
-				 */
+				// 扫描 @ComponentScan 注解 value 属性下指定的包路径的所有类，并解析为 BeanDefinitionHolder，并注册到 BeanDefinitionMap 容器中
 				Set<BeanDefinitionHolder> scannedBeanDefinitions =
 						this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName());
 				// Check the set of scanned definitions for any further config classes and parse recursively if needed
@@ -316,6 +313,7 @@ class ConfigurationClassParser {
 		}
 
 		// Process any @Import annotations
+		// 处理 @Import 注解
 		processImports(configClass, sourceClass, getImports(sourceClass), true);
 
 		// Process any @ImportResource annotations
@@ -331,12 +329,14 @@ class ConfigurationClassParser {
 		}
 
 		// Process individual @Bean methods
+		// 处理当前类中的 @Bean 方法
 		Set<MethodMetadata> beanMethods = retrieveBeanMethodMetadata(sourceClass);
 		for (MethodMetadata methodMetadata : beanMethods) {
 			configClass.addBeanMethod(new BeanMethod(methodMetadata, configClass));
 		}
 
 		// Process default methods on interfaces
+		// 处理当前类所实现的接口中的 @Bean 方法
 		processInterfaces(configClass, sourceClass);
 
 		// Process superclass, if any
@@ -578,6 +578,8 @@ class ConfigurationClassParser {
 			return;
 		}
 
+		// checkForCircularImports：是否检测循环import
+		// isChainedImportOnStack(configClass)：判断是否循环import
 		if (checkForCircularImports && isChainedImportOnStack(configClass)) {
 			this.problemReporter.error(new CircularImportProblem(configClass, this.importStack));
 		}
@@ -613,8 +615,11 @@ class ConfigurationClassParser {
 					else {
 						// Candidate class not an ImportSelector or ImportBeanDefinitionRegistrar ->
 						// process it as an @Configuration class
+						// 注册当前带 @Import 注解的类 和 被 import 类的对应关系
 						this.importStack.registerImport(
 								currentSourceClass.getMetadata(), candidate.getMetadata().getClassName());
+						// candidate.asConfigClass(configClass) 这个方法，只要执行这个方法，说明candidate是被configClass引入进来的，
+						// 当把candidate转变为ConfigurationClass对象的时候必须传一个configClass对象存放在importedBy集合中
 						processConfigurationClass(candidate.asConfigClass(configClass));
 					}
 				}
@@ -634,6 +639,8 @@ class ConfigurationClassParser {
 	}
 
 	private boolean isChainedImportOnStack(ConfigurationClass configClass) {
+
+		// （这里如果包含的话难道不能说明已经循环import了吗？）
 		if (this.importStack.contains(configClass)) {
 			String configClassName = configClass.getMetadata().getClassName();
 			AnnotationMetadata importingClass = this.importStack.getImportingClassFor(configClassName);
@@ -719,6 +726,9 @@ class ConfigurationClassParser {
 	@SuppressWarnings("serial")
 	private static class ImportStack extends ArrayDeque<ConfigurationClass> implements ImportRegistry {
 
+		// key：被import
+		// value：带@Import 注解的类
+		// MultiValueMap 是一个 Map<K, List<V>>，说明存储的value是一个list集合
 		private final MultiValueMap<String, AnnotationMetadata> imports = new LinkedMultiValueMap<>();
 
 		public void registerImport(AnnotationMetadata importingClass, String importedClass) {

@@ -105,11 +105,13 @@ class ConditionEvaluator {
 			if (condition instanceof ConfigurationCondition) {
 				requiredPhase = ((ConfigurationCondition) condition).getConfigurationPhase();
 			}
+			// 为true的两个条件：
+			// 	1、condition没有实现ConfigurationCondition接口，并且match为false
+			//	2、condition有实现ConfigurationCondition接口，且阶段和传过来的阶段值相同，即ConfigurationPhase值，并且match为false
 			if ((requiredPhase == null || requiredPhase == phase) && !condition.matches(this.context, metadata)) {
 				return true;
 			}
 		}
-
 		return false;
 	}
 

@@ -136,25 +136,31 @@ class ConfigurationClassBeanDefinitionReader {
 				// 因为当前 BeanDefinition 不需要进行注册，所以移除
 				this.registry.removeBeanDefinition(beanName);
 			}
+			// 如果当前类是带@import注解的类，那么需要移除imports的对应关系
+			// imports：记录被import类与带@Import注解的类集合的映射关系，key为被import类，value是带@Import注解的类的list集合
+			// 为什么要删除？（因为如果自己都不允许注册，那么我import的类就跟不可能进行注册了）
+			// 那什么时候进行注册呢？
 			this.importRegistry.removeImportingClass(configClass.getMetadata().getClassName());
 			return;
 		}
 
-		// 如果是被带 @Import 注解的类导入进来的
+		// 如果是被带 @Import 注解的类导入进来的或者是一个内部注册类
 		if (configClass.isImported()) {
-			// 将被带 @Import 注解的类导入进来的类进行注册，因为只是一个普通的类，前面是不被扫描的
+			// 进行注册
 			registerBeanDefinitionForImportedConfigurationClass(configClass);
 		}
 		// 处理 @Bean 方法
 		for (BeanMethod beanMethod : configClass.getBeanMethods()) {
 
-			// 因为前面扫描是没有扫描方法的，只是扫描了类，所以这里需要再次对 @Bean 注解的方法进行注册
+			// 对 @Bean 注解的方法进行注册
 			loadBeanDefinitionsForBeanMethod(beanMethod);
 		}
 
 		// 解析 @ImportedResources 注解，也就是引入的 xml 配置文件
 		loadBeanDefinitionsFromImportedResources(configClass.getImportedResources());
 		loadBeanDefinitionsFromRegistrars(configClass.getImportBeanDefinitionRegistrars());
+
+		//为什么没有对 @Import注解的类进行注册？
 	}
 
 	/**
@@ -447,21 +453,17 @@ class ConfigurationClassBeanDefinitionReader {
 		public boolean shouldSkip(ConfigurationClass configClass) {
 			Boolean skip = this.skipped.get(configClass);
 			if (skip == null) {
-				/**
-				 * 当前类是否是被 @Import 注解的类导进来的
-				 */
+				// 当前类是否是被 @Import 注解的类导进来的
+				// 或者是带@Import注解的类的内部类
 				if (configClass.isImported()) {
 					boolean allSkipped = true;
-					/**
-					 * 如果当前类是被 @Import 注解的类导进来的，那么不会全部跳过， allSkipped = false
-					 */
 					for (ConfigurationClass importedBy : configClass.getImportedBy()) {
+						// 判断导入configClass的类的类是否需要跳过
 						if (!shouldSkip(importedBy)) {
-							/**
-							 * 当前类被带 @Import 注解的类导入进来的，
-							 * 并且 带 @Import 注解的类没有 @Condition 注解或者条件结果为 true（也就是满足注册条件）
-							 */
+							// 当前类被带 @Import 注解的类导入进来的，并且 带 @Import 注解的类没有 @Condition 注解或者条件结果为 true（也就是满足注册条件）
 							allSkipped = false;
+							// 为什么只判断一个不需要跳过就直接break
+							// （因为当一个配置类被多个带@Import注解的类import过，那么，只要有一个带@Import注解的类满足注册的条件，那么这个import的类就可以进行注册）
 							break;
 						}
 					}
@@ -470,10 +472,9 @@ class ConfigurationClassBeanDefinitionReader {
 						skip = true;
 					}
 				}
+				// 这里还是null的话，说明不是被import进来的
 				if (skip == null) {
-					/**
-					 * false：没有 @Condition 注解或者条件结果为 true（也就是满足注册条件）
-					 */
+					// false：没有 @Condition 注解或者条件结果为 true（也就是满足注册条件）
 					skip = conditionEvaluator.shouldSkip(configClass.getMetadata(), ConfigurationPhase.REGISTER_BEAN);
 				}
 				this.skipped.put(configClass, skip);

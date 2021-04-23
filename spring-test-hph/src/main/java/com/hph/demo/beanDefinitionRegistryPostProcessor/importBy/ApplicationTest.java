@@ -13,7 +13,8 @@ public class ApplicationTest {
 	public static void main(String[] args) {
 
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
-		ac.register(OutClassTest.class);
+		// ac.register(OutClassTest.class);
+		ac.register(DemoConfig.class);
 		ac.refresh();
 	}
 }
