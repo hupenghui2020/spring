@@ -344,7 +344,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
 		Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
 		do {
-			// 解析配置类
+			// 解析配置类（解析@ComponentScan 注解的时候会对一些符合规则的类进行注册）
 			parser.parse(candidates);
 			parser.validate();
 
@@ -358,7 +358,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						registry, this.sourceExtractor, this.resourceLoader, this.environment,
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
-			// 对已经解析的配置类进行注册处理
+			// 对上面没有注册但是已经解析的配置类进行注册处理（比如被import进来的类，或@Bean方法的类，带@ImportedResources 注解的类）
+			// （注意：上面执行完 parse 方法后只是对被扫描出来的并符合规则的类（加了@Component注解）进行了注册）
 			this.reader.loadBeanDefinitions(configClasses);
 			// 已经被解析的
 			alreadyParsed.addAll(configClasses);
@@ -374,6 +375,9 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 				for (String candidateName : newCandidateNames) {
 					if (!oldCandidateNames.contains(candidateName)) {
 						BeanDefinition bd = registry.getBeanDefinition(candidateName);
+						// 条件 !alreadyParsedClasses.contains(bd.getBeanClassName())
+						// 什么意思：说明一个类没有被解析，但是已经被注册了，需要解析一遍，什么状态下会出现这种情况？
+						// 比如通过一个实现了 ImportBeanDefinitionRegistrar 接口的类，并在registerBeanDefinitions方法中注册的bean
 						if (ConfigurationClassUtils.checkConfigurationClassCandidate(bd, this.metadataReaderFactory) &&
 								!alreadyParsedClasses.contains(bd.getBeanClassName())) {
 							candidates.add(new BeanDefinitionHolder(bd, candidateName));

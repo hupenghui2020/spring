@@ -279,6 +279,12 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<>();
 		for (String basePackage : basePackages) {
 			// 扫描出指定包路径的所有组件，并解析为 beanDefinition
+			// 根据默认的过滤规则进行过滤
+			// 注册默认的过滤规则
+			// （这里只有include过滤规则
+			// 		1、Component 注解类型
+			// 		2、ManagedBean 注解类型
+			// 		3、Named 注解类型	）
 			Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
 			for (BeanDefinition candidate : candidates) {
 				ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(candidate);
@@ -295,13 +301,14 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 					// 如：Lazy属性、DependsOn属性、Role属性、Description属性
 					AnnotationConfigUtils.processCommonDefinitionAnnotations((AnnotatedBeanDefinition) candidate);
 				}
-				// 校验是否在 beanDefinitionMap 容器中存在
+				// 校验是否在 beanDefinitionMap 容器中存在（不包含的话走里面）
 				if (checkCandidate(beanName, candidate)) {
 					BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(candidate, beanName);
 					definitionHolder =
 							AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
 					beanDefinitions.add(definitionHolder);
-					// 进行注册进 beanDefinitionsMap 容器中
+					// 直接对符合规范的类进行注册到 beanDefinitionsMap 容器中
+					// （所以如果扫描的类是带@Import注解的类的话并不会进一步进行解析）
 					registerBeanDefinition(definitionHolder, this.registry);
 				}
 			}

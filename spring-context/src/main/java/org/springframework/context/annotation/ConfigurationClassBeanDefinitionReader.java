@@ -159,8 +159,6 @@ class ConfigurationClassBeanDefinitionReader {
 		// 解析 @ImportedResources 注解，也就是引入的 xml 配置文件
 		loadBeanDefinitionsFromImportedResources(configClass.getImportedResources());
 		loadBeanDefinitionsFromRegistrars(configClass.getImportBeanDefinitionRegistrars());
-
-		//为什么没有对 @Import注解的类进行注册？
 	}
 
 	/**
