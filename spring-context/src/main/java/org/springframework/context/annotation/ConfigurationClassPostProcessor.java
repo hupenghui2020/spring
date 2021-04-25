@@ -377,7 +377,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						BeanDefinition bd = registry.getBeanDefinition(candidateName);
 						// 条件 !alreadyParsedClasses.contains(bd.getBeanClassName())
 						// 什么意思：说明一个类没有被解析，但是已经被注册了，需要解析一遍，什么状态下会出现这种情况？
-						// 比如通过一个实现了 ImportBeanDefinitionRegistrar 接口的类，并在registerBeanDefinitions方法中注册的bean
+						// 比如通过一个实现了 ImportBeanDefinitionRegistrar 接口的类，并在registerBeanDefinitions方法中注册的bean,并且bean为配置类，配置类的话为了不被扫描到，要加excludeFilters进行排除
 						if (ConfigurationClassUtils.checkConfigurationClassCandidate(bd, this.metadataReaderFactory) &&
 								!alreadyParsedClasses.contains(bd.getBeanClassName())) {
 							candidates.add(new BeanDefinitionHolder(bd, candidateName));

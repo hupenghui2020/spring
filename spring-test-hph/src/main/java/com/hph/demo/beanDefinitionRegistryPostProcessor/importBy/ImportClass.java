@@ -1,6 +1,7 @@
 package com.hph.demo.beanDefinitionRegistryPostProcessor.importBy;
 
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -10,7 +11,7 @@ import org.springframework.core.type.AnnotationMetadata;
 /**
  * @author hph
  */
-@Configuration
+//@Configuration
 public class ImportClass implements ImportBeanDefinitionRegistrar {
 
 	@Bean
@@ -29,5 +30,7 @@ public class ImportClass implements ImportBeanDefinitionRegistrar {
 	@Override
 	public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
+		RootBeanDefinition bd = new RootBeanDefinition(A.class);
+		registry.registerBeanDefinition("aaaa", bd);
 	}
 }
