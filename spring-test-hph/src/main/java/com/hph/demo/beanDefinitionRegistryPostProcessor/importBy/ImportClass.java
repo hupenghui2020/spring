@@ -11,9 +11,13 @@ import org.springframework.core.type.AnnotationMetadata;
 /**
  * @author hph
  */
-//@Configuration
-public class ImportClass implements ImportBeanDefinitionRegistrar {
+@Configuration
+public class ImportClass {
 
+	/**
+	 * 这里的 @Bean 方法不会被解析，因为实现了ImportBeanDefinitionRegistrar的话，ImportClass不会被解析
+	 * @return
+	 */
 	@Bean
 	public BeanMethodTest beanMethodTest() {
 
@@ -25,12 +29,5 @@ public class ImportClass implements ImportBeanDefinitionRegistrar {
 
 		beanMethodTest();
 		return new BeanMethodTest2();
-	}
-
-	@Override
-	public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-
-		RootBeanDefinition bd = new RootBeanDefinition(A.class);
-		registry.registerBeanDefinition("aaaa", bd);
 	}
 }

@@ -358,6 +358,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						registry, this.sourceExtractor, this.resourceLoader, this.environment,
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
+			// 到这里为止，下面的代码就会出现再对配置类进行解析的操作了
 			// 对上面没有注册但是已经解析的配置类进行注册处理（比如被import进来的类，或@Bean方法的类，带@ImportedResources 注解的类）
 			// （注意：上面执行完 parse 方法后只是对被扫描出来的并符合规则的类（加了@Component注解）进行了注册）
 			this.reader.loadBeanDefinitions(configClasses);
@@ -411,7 +412,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		Map<String, AbstractBeanDefinition> configBeanDefs = new LinkedHashMap<>();
 		for (String beanName : beanFactory.getBeanDefinitionNames()) {
 			BeanDefinition beanDef = beanFactory.getBeanDefinition(beanName);
-			// 判断是否为全配置类
+			// 判断是否为全配置类（只有全配置类才会代理）
 			if (ConfigurationClassUtils.isFullConfigurationClass(beanDef)) {
 				if (!(beanDef instanceof AbstractBeanDefinition)) {
 					throw new BeanDefinitionStoreException("Cannot enhance @Configuration bean definition '" +
