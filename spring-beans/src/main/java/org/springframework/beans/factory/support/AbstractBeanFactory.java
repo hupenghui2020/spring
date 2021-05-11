@@ -310,6 +310,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			try {
 				// 如果bean与其它bean存在父子关系的话，则合并父类的相关属性（）
 				RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
+				// 检出bean是否为抽象的（为啥检查这个？）
 				checkMergedBeanDefinition(mbd, beanName, args);
 
 				// Guarantee initialization of beans that the current bean depends on.
@@ -1245,7 +1246,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// Quick check on the concurrent map first, with minimal locking.
 		RootBeanDefinition mbd = this.mergedBeanDefinitions.get(beanName);
 		// 为什么不会进行合并，敢保证 beanDefinition 没有被修改？
-		// 因为spring直至执行到这个方法期间没有对外提供对 beanDefinition 进行修改的 api ，所以敢保证，从而不需要合并
+		// 因为spring直至执行到这个方法之后没有对外提供对 beanDefinition 进行修改的 api ，所以敢保证，从而不需要合并
 		if (mbd != null) {
 			return mbd;
 		}

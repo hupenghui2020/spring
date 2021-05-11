@@ -15,6 +15,5 @@ public class ApplicationTest {
 		// ac.getBeanFactory().registerSingleton("d", new D());
 		ac.refresh();
 		ac.getBean(Abfpp.class);
-
 	}
 }

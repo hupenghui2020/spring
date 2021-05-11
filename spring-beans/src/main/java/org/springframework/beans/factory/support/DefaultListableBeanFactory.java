@@ -501,6 +501,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	@Override
 	public String[] getBeanNamesForType(@Nullable Class<?> type, boolean includeNonSingletons, boolean allowEagerInit) {
 		if (!isConfigurationFrozen() || type == null || !allowEagerInit) {
+			// 没有被冻结，说明bean名称可能已被更改，需要重新去获取
 			return doGetBeanNamesForType(ResolvableType.forRawClass(type), includeNonSingletons, allowEagerInit);
 		}
 		Map<Class<?>, String[]> cache =
@@ -956,7 +957,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							"] with [" + beanDefinition + "]");
 				}
 			}
-			// beanDefinitionMap里面有，但是再次put，说明register的时候会覆盖之前的
+			// beanDefinitionMap里面有相同的beanName，再次put，说明register的时候会覆盖之前的
 			this.beanDefinitionMap.put(beanName, beanDefinition);
 		}
 		// beanDefinitionMap里面没有
@@ -980,12 +981,16 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				// Still in startup registration phase
 				this.beanDefinitionMap.put(beanName, beanDefinition);
 				this.beanDefinitionNames.add(beanName);
+				// 如果手动注册的singlone实例存在这个bean名称，则需要在manualSingletonNames容器中删除
+				//（反正就是singloneObjects容器里的实例个数等于beanDefinitionNames（spring实例化的） + manualSingletonNames（手动实例化的））
 				removeManualSingletonName(beanName);
 			}
 			this.frozenBeanDefinitionNames = null;
 		}
 
+		// 如果已经有被注册或者已经被实例化
 		if (existingDefinition != null || containsSingleton(beanName)) {
+			// 重置所有与beanName有关系的bean（比如有的bean与beanName有父子关系）
 			resetBeanDefinition(beanName);
 		}
 		else if (isConfigurationFrozen()) {
@@ -1050,6 +1055,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 
 		// Reset all bean definitions that have the given bean as parent (recursively).
+		// 重置所有具有给定bean作为父对象的bean定义（递归）。
 		for (String bdName : this.beanDefinitionNames) {
 			if (!beanName.equals(bdName)) {
 				BeanDefinition bd = this.beanDefinitionMap.get(bdName);
