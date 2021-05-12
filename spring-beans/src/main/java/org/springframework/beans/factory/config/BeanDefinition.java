@@ -22,6 +22,8 @@ import org.springframework.core.AttributeAccessor;
 import org.springframework.lang.Nullable;
 
 /**
+ * 定义 BeanDefinition 的一些公共方法（行为）
+ *
  * A BeanDefinition describes a bean instance, which has property values,
  * constructor argument values, and further information supplied by
  * concrete implementations.
@@ -57,6 +59,8 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	/**
 	 * Role hint indicating that a {@code BeanDefinition} is a major part
 	 * of the application. Typically corresponds to a user-defined bean.
+	 *
+	 * 标识：用户定义的bean
 	 */
 	int ROLE_APPLICATION = 0;
 
@@ -68,6 +72,8 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * of when looking more closely at a particular
 	 * {@link org.springframework.beans.factory.parsing.ComponentDefinition},
 	 * but not when looking at the overall configuration of an application.
+	 *
+	 * 标识：来源配置文件的bean
 	 */
 	int ROLE_SUPPORT = 1;
 
@@ -76,6 +82,8 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * entirely background role and has no relevance to the end-user. This hint is
 	 * used when registering beans that are completely part of the internal workings
 	 * of a {@link org.springframework.beans.factory.parsing.ComponentDefinition}.
+	 *
+	 * 标识：Spring内部的bean
 	 */
 	int ROLE_INFRASTRUCTURE = 2;
 
@@ -148,6 +156,8 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	/**
 	 * Set the names of the beans that this bean depends on being initialized.
 	 * The bean factory will guarantee that these beans get initialized first.
+	 *
+	 * 设置比当前bean先实例化的bean
 	 */
 	void setDependsOn(@Nullable String... dependsOn);
 
@@ -203,6 +213,8 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * or otherwise as a static method on the local bean class.
 	 * @see #setFactoryBeanName
 	 * @see #setBeanClassName
+	 *
+	 * 和 etFactoryBeanName 结合使用
 	 */
 	void setFactoryMethodName(@Nullable String factoryMethodName);
 
@@ -216,6 +228,9 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * Return the constructor argument values for this bean.
 	 * <p>The returned instance can be modified during bean factory post-processing.
 	 * @return the ConstructorArgumentValues object (never {@code null})
+	 *
+	 * 用来实例化bean的构造方法
+	 * 调用 getConstructorArgumentValues().add(xxx, xxx) 设置构造方法参数就相当于指定构造方法
 	 */
 	ConstructorArgumentValues getConstructorArgumentValues();
 
@@ -231,6 +246,9 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * Return the property values to be applied to a new instance of the bean.
 	 * <p>The returned instance can be modified during bean factory post-processing.
 	 * @return the MutablePropertyValues object (never {@code null})
+	 *
+	 * 属性值
+	 * 调用 getPropertyValues().add(xxx, xxx) 方法相当于调用 setXxx 方法，也就是设置属性值
 	 */
 	MutablePropertyValues getPropertyValues();
 

@@ -38,6 +38,9 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 /**
+ * 存放 BeanDefinition 的公共属性，并且实现了 BeanDefinition 接口中的抽象方法
+ * （因为你会发现，虽然 BeanDefinition 接口中定义了一些 set 和 get 方法，但是并没有相应的属性，因为属性全定义在这个类里）
+ *
  * Base class for concrete, full-fledged {@link BeanDefinition} classes,
  * factoring out common properties of {@link GenericBeanDefinition},
  * {@link RootBeanDefinition}, and {@link ChildBeanDefinition}.
@@ -65,52 +68,75 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	public static final String SCOPE_DEFAULT = "";
 
 	/**
+	 * 默认的装配类型（手动装配）
+	 *
 	 * Constant that indicates no external autowiring at all.
 	 * @see #setAutowireMode
 	 */
 	public static final int AUTOWIRE_NO = AutowireCapableBeanFactory.AUTOWIRE_NO;
 
 	/**
+	 * 通过名称装配（自动装配）
+	 *
 	 * Constant that indicates autowiring bean properties by name.
 	 * @see #setAutowireMode
 	 */
 	public static final int AUTOWIRE_BY_NAME = AutowireCapableBeanFactory.AUTOWIRE_BY_NAME;
 
 	/**
+	 * 通过类型进行装配（自动装配）
+	 *
 	 * Constant that indicates autowiring bean properties by type.
 	 * @see #setAutowireMode
 	 */
 	public static final int AUTOWIRE_BY_TYPE = AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE;
 
 	/**
+	 * 通过构造器进行装配（自动装配）
+	 *
 	 * Constant that indicates autowiring a constructor.
 	 * @see #setAutowireMode
 	 */
 	public static final int AUTOWIRE_CONSTRUCTOR = AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
 
 	/**
+	 * 已经过时了
+	 *
 	 * Constant that indicates determining an appropriate autowire strategy
 	 * through introspection of the bean class.
 	 * @see #setAutowireMode
 	 * @deprecated as of Spring 3.0: If you are using mixed autowiring strategies,
 	 * use annotation-based autowiring for clearer demarcation of autowiring needs.
+	 *
 	 */
 	@Deprecated
 	public static final int AUTOWIRE_AUTODETECT = AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT;
 
 	/**
+	 * 对bean的依赖项进行检查（检查依赖是否注入上）
+	 * （注意：依赖不是属性，spring把set方法当做依赖）
+	 * 不检查
+	 *
 	 * Constant that indicates no dependency check at all.
 	 * @see #setDependencyCheck
 	 */
 	public static final int DEPENDENCY_CHECK_NONE = 0;
 
 	/**
+	 * 对bean的依赖项进行检查（检查依赖是否注入上）
+	 * 检查对象依赖（非jdk内置的对象）
+	 * （注意：依赖不是属性，spring把set方法当做依赖）
+	 *
 	 * Constant that indicates dependency checking for object references.
 	 * @see #setDependencyCheck
 	 */
 	public static final int DEPENDENCY_CHECK_OBJECTS = 1;
 
 	/**
+	 * 对bean的依赖项进行检查（检查依赖是否注入上）
+	 * 检查原始类型（基本类型，String，集合）
+	 * （注意：依赖不是属性，spring把set方法当做依赖）
+	 *
 	 * Constant that indicates dependency checking for "simple" properties.
 	 * @see #setDependencyCheck
 	 * @see org.springframework.beans.BeanUtils#isSimpleProperty
@@ -118,6 +144,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	public static final int DEPENDENCY_CHECK_SIMPLE = 2;
 
 	/**
+	 * 检查所有类型依赖
+	 *
 	 * Constant that indicates dependency checking for all properties
 	 * (object references as well as "simple" properties).
 	 * @see #setDependencyCheck
@@ -163,6 +191,9 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	@Nullable
 	private Supplier<?> instanceSupplier;
 
+	/**
+	 * 是否允许访问非公共构造函数和方法。
+	 */
 	private boolean nonPublicAccessAllowed = true;
 
 	private boolean lenientConstructorResolution = true;
@@ -181,16 +212,31 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	private MethodOverrides methodOverrides = new MethodOverrides();
 
+	/**
+	 * 存储的是 beanDefinition 通过 setInitMethodName 方法设置的初始化方法名
+	 */
 	@Nullable
 	private String initMethodName;
 
 	@Nullable
 	private String destroyMethodName;
 
+	/**
+	 * 是否强制执行 InitMethod 方法
+	 * 两种情况：
+	 * 	第一种：就是说如果定义的init方法是private的，使用 clazz.getMethod 方法是获取不到的，
+	 * 		如果设置 enforceInitMethod 为true的话就使用 clazz.getDeclaredMethod 方法获取，
+	 * 		但是，有个前提，就是 nonPublicAccessAllowed 属性必须为 true，如果为 false 的话，只会使用 clazz.getMethod 方法去获取，
+	 * 		这样的话就获取不到，执行不了初始化方法。
+	 * 	第二种：就是给定了	InitMethod 方法名称，但是类中并没有这个方法，如果 enforceInitMethod 为 true 的话会抛异常，为 false 就不会
+	 */
 	private boolean enforceInitMethod = true;
 
 	private boolean enforceDestroyMethod = true;
 
+	/**
+	 * 是否是合成方法
+	 */
 	private boolean synthetic = false;
 
 	private int role = BeanDefinition.ROLE_APPLICATION;
