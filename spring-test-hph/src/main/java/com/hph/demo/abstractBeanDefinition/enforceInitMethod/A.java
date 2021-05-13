@@ -16,4 +16,8 @@ public class A {
 
 		System.out.println("initAnn......");
 	}
+
+	public void sys(){
+		System.out.println("88888888888888");
+	}
 }

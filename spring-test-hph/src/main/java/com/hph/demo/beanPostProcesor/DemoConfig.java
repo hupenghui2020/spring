@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Import;
 /**
  * @author hph
  */
-@ComponentScan("com.hph.demo")
-@Import(ImportBeanDefinitionRegistrarTest.class)
+@ComponentScan("com.hph.demo.beanPostProcesor")
 public class DemoConfig {
 }

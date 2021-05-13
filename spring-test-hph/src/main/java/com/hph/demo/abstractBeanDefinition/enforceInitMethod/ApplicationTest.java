@@ -16,10 +16,11 @@ public class ApplicationTest {
 
 		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
 		applicationContext.register(A.class);
-		GenericBeanDefinition genericBeanDefinition = (GenericBeanDefinition)applicationContext.getBeanDefinition("a");
+		applicationContext.getBean(A.class).sys();
+		/*GenericBeanDefinition genericBeanDefinition = (GenericBeanDefinition)applicationContext.getBeanDefinition("a");
 		genericBeanDefinition.setInitMethodName("init");
 		genericBeanDefinition.setNonPublicAccessAllowed(false);
-		genericBeanDefinition.setEnforceInitMethod(false);
+		genericBeanDefinition.setEnforceInitMethod(false);*/
 		applicationContext.refresh();
 	}
 }

@@ -54,6 +54,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
+ *
  * Reads a given fully-populated set of ConfigurationClass instances, registering bean
  * definitions with the given {@link BeanDefinitionRegistry} based on its contents.
  *
@@ -386,6 +387,8 @@ class ConfigurationClassBeanDefinitionReader {
 
 
 	/**
+	 * 加了 @Bean 注解的方法所使用的 BeanDefinition 类型
+	 *
 	 * {@link RootBeanDefinition} marker subclass used to signify that a bean definition
 	 * was created from a configuration class as opposed to any other configuration source.
 	 * Used in bean overriding cases where it's necessary to determine whether the bean
@@ -394,8 +397,14 @@ class ConfigurationClassBeanDefinitionReader {
 	@SuppressWarnings("serial")
 	private static class ConfigurationClassBeanDefinition extends RootBeanDefinition implements AnnotatedBeanDefinition {
 
+		/**
+		 * 载体类的元数据
+		 */
 		private final AnnotationMetadata annotationMetadata;
 
+		/**
+		 * 载体方法的元数据
+		 */
 		private final MethodMetadata factoryMethodMetadata;
 
 		public ConfigurationClassBeanDefinition(ConfigurationClass configClass, MethodMetadata beanMethodMetadata) {
