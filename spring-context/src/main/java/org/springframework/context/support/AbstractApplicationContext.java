@@ -663,6 +663,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// Tell the internal bean factory to use the context's class loader etc.
 		// 设置beanFactory的classLoader 为当前content的classLoader
 		beanFactory.setBeanClassLoader(getClassLoader());
+
+		// 解析el表达式的组件
 		// 设置beanFactory的表达式语言处理器
 		// 默认使用#{bean.xxx}的形式来调用相关属性值
 		beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
@@ -671,6 +673,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Configure the bean factory with context callbacks.
 		// 添加BeanPostProcessor
+		// 问题：为什么要直接new，而不是注册后交给spring容器进行实例化？
+		// 因为不需要走bean的生命周期（spring源码中，大部分直接new的原因都是不需要走spring的生命周期才会那样操作）
 		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
 		// 设置几个忽略自动装配的接口
 		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
