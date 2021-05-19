@@ -3,6 +3,8 @@ package com.hph.demo.beanDefinitionRegistryPostProcessor.priorityOrdered;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.beans.Introspector;
+
 /**
  * 测试：当一个类实现了 BeanDefinitionRegistryPostProcessor和Ordered接口，
  * 	如果在postProcessBeanDefinitionRegistry方法中，注册了一个实现了BeanDefinitionRegistryPostProcessor和PriorityOrdered接口的类，
