@@ -297,12 +297,21 @@ final class PostProcessorRegistrationDelegate {
 	public static void registerBeanPostProcessors(
 			ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext) {
 
+		// 走了spring生命周期从而spring进行管理的beanProcessor名称
 		String[] postProcessorNames = beanFactory.getBeanNamesForType(BeanPostProcessor.class, true, false);
 
 		// Register BeanPostProcessorChecker that logs an info message when
 		// a bean is created during BeanPostProcessor instantiation, i.e. when
 		// a bean is not eligible for getting processed by all BeanPostProcessors.
+		// beanProcessorTargetCount：表示一个bean的生命周期中，需要经历beanProcessor处理的个数，这个数字再后面就不会变了，
+		// 	说明beanProcessor的个数在这里已经定死了，就算你后面添加了新的beanProcessor也不会生效
+		//  beanFactory.getBeanPostProcessorCount()：可能前面程序员会手动添加beanProcessor
+		// postProcessorNames：走了spring生命周期从而spring进行管理的beanProcessor名称
+		// 同时也代表着，当执行完当前这个方式后（registerBeanPostProcessors），beanProcessors容器中beanProcessor的数量一定是 beanProcessorTargetCount
 		int beanProcessorTargetCount = beanFactory.getBeanPostProcessorCount() + 1 + postProcessorNames.length;
+		// 这里spring添加一个固定的beanProcessor，所以上面才会加1
+		// BeanPostProcessorChecker的用处：用于检查执行期望的BeanProcessor的个数和当前拿到的所有BeanPostProcessor的个数的数量是否一致，
+		//	如果不一样，就会打印日志，便于程序员排除错误
 		beanFactory.addBeanPostProcessor(new BeanPostProcessorChecker(beanFactory, beanProcessorTargetCount));
 
 		// Separate between BeanPostProcessors that implement PriorityOrdered,
@@ -311,6 +320,7 @@ final class PostProcessorRegistrationDelegate {
 		List<BeanPostProcessor> internalPostProcessors = new ArrayList<>();
 		List<String> orderedPostProcessorNames = new ArrayList<>();
 		List<String> nonOrderedPostProcessorNames = new ArrayList<>();
+		// beanProcessor 进行排序的思想是：先实例化beanProcessor的可以提供给后实例化的beanProcessor使用
 		for (String ppName : postProcessorNames) {
 			if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
 				BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
@@ -319,6 +329,8 @@ final class PostProcessorRegistrationDelegate {
 					internalPostProcessors.add(pp);
 				}
 			}
+			// 为什么这里不和上面一样存放实例化对象呢？
+			// （因为下面先注册的priorityOrderedPostProcessors是要提供给后注册的beanProcessor使用的，如果提前实例化的话，注册的priorityOrderedPostProcessors就不会对其起作用）
 			else if (beanFactory.isTypeMatch(ppName, Ordered.class)) {
 				orderedPostProcessorNames.add(ppName);
 			}
@@ -329,6 +341,8 @@ final class PostProcessorRegistrationDelegate {
 
 		// First, register the BeanPostProcessors that implement PriorityOrdered.
 		sortPostProcessors(priorityOrderedPostProcessors, beanFactory);
+		// 将 priorityOrderedPostProcessors 里面的beanProcessor注册到beanProcessor容器中，
+		// 从而可以提供给下面的beanProcessor实例化的时候用
 		registerBeanPostProcessors(beanFactory, priorityOrderedPostProcessors);
 
 		// Next, register the BeanPostProcessors that implement Ordered.
@@ -356,6 +370,7 @@ final class PostProcessorRegistrationDelegate {
 
 		// Finally, re-register all internal BeanPostProcessors.
 		sortPostProcessors(internalPostProcessors, beanFactory);
+		// 为什么要重新注册实现了 MergedBeanDefinitionPostProcessor 接口的beanProcessor？
 		registerBeanPostProcessors(beanFactory, internalPostProcessors);
 
 		// Re-register post-processor for detecting inner beans as ApplicationListeners,
@@ -433,9 +448,18 @@ final class PostProcessorRegistrationDelegate {
 
 		@Override
 		public Object postProcessAfterInitialization(Object bean, String beanName) {
+
+
+			// isInfrastructureBean(beanName)：判断是否是spring内部的bean，只有不是spring内部的bean才会进去
 			if (!(bean instanceof BeanPostProcessor) && !isInfrastructureBean(beanName) &&
 					this.beanFactory.getBeanPostProcessorCount() < this.beanPostProcessorTargetCount) {
 				if (logger.isInfoEnabled()) {
+					// 这个日志什么时候会打印呢？
+					// 只有当beanProcessors容器中的beanProcessor数量与预期的数量不相等时才会打印
+					// 什么情况下会不相等呢？
+					// 在实现了beanProcessor接口的类中，如果有需要注入的属性，当注入属性时，就要对属性进行实例化，走spring的实例化生命周期，
+					// 	就会执行其他实现了beanProcessor实现类中的beanProcessor中的方法，也就会执行当前这个beanProcessor的postProcessAfterInitialization 方法，执行到这个的时候，
+					// 	所有的beanProcessor还未实例化完，没有全部注册到beanProcessors容器中，所以会打印这个日志
 					logger.info("Bean '" + beanName + "' of type [" + bean.getClass().getName() +
 							"] is not eligible for getting processed by all BeanPostProcessors " +
 							"(for example: not eligible for auto-proxying)");
