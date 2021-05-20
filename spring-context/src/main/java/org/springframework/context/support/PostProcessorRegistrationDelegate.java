@@ -371,6 +371,7 @@ final class PostProcessorRegistrationDelegate {
 		// Finally, re-register all internal BeanPostProcessors.
 		sortPostProcessors(internalPostProcessors, beanFactory);
 		// 为什么要重新注册实现了 MergedBeanDefinitionPostProcessor 接口的beanProcessor？
+		// 只是为了排序
 		registerBeanPostProcessors(beanFactory, internalPostProcessors);
 
 		// Re-register post-processor for detecting inner beans as ApplicationListeners,

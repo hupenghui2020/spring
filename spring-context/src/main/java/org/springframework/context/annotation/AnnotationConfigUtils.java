@@ -162,12 +162,17 @@ public abstract class AnnotationConfigUtils {
 
 		// 这里开始注册 spring 内置的 bd
 		if (!registry.containsBeanDefinition(CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME)) {
+			// 这个BeanDefinitionRegistryPostProcessor用于包的扫描注册
 			RootBeanDefinition def = new RootBeanDefinition(ConfigurationClassPostProcessor.class);
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME));
 		}
 
 		if (!registry.containsBeanDefinition(AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME)) {
+			// 这个beanPostProcessor用于依赖注入，比如：
+			// 1、对一个bean进行创建时，在依赖注入之前，使用这个beanPostProcessor对当前的bean进行解析，
+			// 	解析出所有带@Autowire注解的属性和方法进行缓存，下面进行@Autowire注解的注入是会用到
+			// 2、对@Autowire注解的依赖注入会用这个beanPostProcessr
 			RootBeanDefinition def = new RootBeanDefinition(AutowiredAnnotationBeanPostProcessor.class);
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME));
@@ -175,6 +180,7 @@ public abstract class AnnotationConfigUtils {
 
 		// Check for JSR-250 support, and if present add the CommonAnnotationBeanPostProcessor.
 		if (jsr250Present && !registry.containsBeanDefinition(COMMON_ANNOTATION_PROCESSOR_BEAN_NAME)) {
+			// 这个beanPostProcessor也是用于依赖注入的，不过是用于@Resource注解的
 			RootBeanDefinition def = new RootBeanDefinition(CommonAnnotationBeanPostProcessor.class);
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, COMMON_ANNOTATION_PROCESSOR_BEAN_NAME));
