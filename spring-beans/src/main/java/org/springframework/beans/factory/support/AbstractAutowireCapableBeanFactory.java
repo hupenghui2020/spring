@@ -571,8 +571,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			// 表明是否已被MergedBeanDefinitionPostProcessor 处理过
 			if (!mbd.postProcessed) {
 				try {
-					// bean 合并后的处理，Autowired注解正是通过此方法实现诸如类型的预解析
-					// 缓存所有加了 @Autowired 注解的属性和方法
+					// 缓存所有加了 @Autowired 注解的属性和方法，下面进行依赖注入的时候用
 					applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
 				}
 				catch (Throwable ex) {
@@ -1381,8 +1380,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Give any InstantiationAwareBeanPostProcessors the opportunity to modify the
 		// state of the bean before properties are set. This can be used, for example,
 		// to support styles of field injection.
-		// 在设置属性之前，让任何 InstantiationAware BeanPostProcessors 都有机会修改 Bean 的状态。
-		// 如：可以设置属性注入的类型
+		// 是否需要属性注入
 		if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof InstantiationAwareBeanPostProcessor) {
@@ -1419,7 +1417,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			pvs = newPvs;
 		}
 
-		// 返回此工厂是否拥有 InstantiationAwareBeanPostProcessor，它将在创建时应用于单例 bean。
+		// 判断是否有用于实例化增强的beanPostProcessor
+		// 实例化增强可以理解为进行属性的注入
 		boolean hasInstAwareBpps = hasInstantiationAwareBeanPostProcessors();
 
 		boolean needsDepCheck = (mbd.getDependencyCheck() != AbstractBeanDefinition.DEPENDENCY_CHECK_NONE);
@@ -1436,6 +1435,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					// 在工厂将给定的属性应用于给定 bean 之前，进行处理，进行属性的注入, 通过 AutowiredAnnotationBeanPostProcessor
 					// AutowiredAnnotationBeanPostProcessor 处理 @Autowired 注解的注入方式
 					// CommonAnnotationBeanPostProcessor 处理 @Resource 注解的注入方式
+					// 这个pvs参数的作用基本是传进来保存数据用的
 					PropertyValues pvsToUse = ibp.postProcessProperties(pvs, bw.getWrappedInstance(), beanName);
 					if (pvsToUse == null) {
 						if (filteredPds == null) {

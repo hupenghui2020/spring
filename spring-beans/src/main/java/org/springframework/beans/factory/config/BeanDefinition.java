@@ -178,6 +178,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 
 	/**
 	 * Return whether this bean is a candidate for getting autowired into some other bean.
+	 * 注入的时候用，是否是其他bean的注入类
 	 */
 	boolean isAutowireCandidate();
 

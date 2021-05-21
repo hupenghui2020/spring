@@ -525,7 +525,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
-			// 对beanFactory 进行各种功能填充
+			// 对beanFactory 进行各种功能组件的填充
 			// 对一些不需要走spring生命周期的处理器进行实例的注册
 			// （并不是注册到beanDefinitionMap中，而是直接将实例放入相应的容器中）
 			prepareBeanFactory(beanFactory);
@@ -690,7 +690,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// BeanFactory interface not registered as resolvable type in a plain factory.
 		// MessageSource registered (and found for autowiring) as a bean.
-		// 设置几个自动装配的特殊规则
+		// 设置几个自动装配的特殊规则（这些bean会在依赖注入的时候用到）
 		beanFactory.registerResolvableDependency(BeanFactory.class, beanFactory);
 		beanFactory.registerResolvableDependency(ResourceLoader.class, this);
 		beanFactory.registerResolvableDependency(ApplicationEventPublisher.class, this);

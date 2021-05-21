@@ -200,12 +200,15 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					singletonObject = this.singletonObjects.get(beanName);
 					if (singletonObject == null) {
 						// 拿不到再去三级缓存中拿
+						// 问题：为什么要三级缓存，为什么这里是从三级缓存里面拿而不是从二级缓存里面拿？
+						//（为了并发调用getBean方法时提高效率，比如：主线程先解决循环依赖的问题）
 						singletonObject = this.earlySingletonObjects.get(beanName);
 						if (singletonObject == null) {
 							// 再拿不到去二级缓存中拿
 							ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 							if (singletonFactory != null) {
 								singletonObject = singletonFactory.getObject();
+								// 三级缓存里面放的是二级缓存获取的实例
 								this.earlySingletonObjects.put(beanName, singletonObject);
 								// 从二级缓存中移除，方便 GC
 								this.singletonFactories.remove(beanName);

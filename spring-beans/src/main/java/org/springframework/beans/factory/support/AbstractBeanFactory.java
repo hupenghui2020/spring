@@ -304,6 +304,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			if (!typeCheckOnly) {
 				// 同时会清除 mergedBeanDefinitions 中的 beanName，以防下面对bean进行创建的时候beanDefinition是已经被修改的
 				// （就是说mergedBeanDefinition不是最新的，需要重新merged）
+				// 这里开始标记当前bean在创建，同时存放到alreadyCreated容器中
 				markBeanAsCreated(beanName);
 			}
 
@@ -890,11 +891,14 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		Assert.notNull(beanPostProcessor, "BeanPostProcessor must not be null");
 		// Remove from old position, if any
 		this.beanPostProcessors.remove(beanPostProcessor);
-		// Track whether it is instantiation/destruction aware
+		// 这里的意思如下：
 		if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+			// InstantiationAwareBeanPostProcessor：字面意思是实例化增强的beanPostProcessor，就是当创建bean的时候，
+			// 	实例化后需要这个类型的beanPostProcessor进行增强处理，比如属性注入，所有这里进行标记，后面进行属性注入等增强操作时就直接判断一下就可以了
 			this.hasInstantiationAwareBeanPostProcessors = true;
 		}
 		if (beanPostProcessor instanceof DestructionAwareBeanPostProcessor) {
+			// 这个也是一样的，不过是bean销毁后
 			this.hasDestructionAwareBeanPostProcessors = true;
 		}
 		// Add to end of list
