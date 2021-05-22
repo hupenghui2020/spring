@@ -45,9 +45,7 @@ import org.springframework.util.Assert;
  * @author Phillip Webb
  * @since 3.0
  * @see AnnotationConfigApplicationContext#register
- */
-
-/**
+ *
  * 1、用于显示注册一个 bean
  * 2、在初始化 spring 容器的过程中他完成了对配置类的注册和解析功能；
  */

@@ -521,10 +521,13 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 			// Tell the subclass to refresh the internal bean factory.
 			// 初始化 beanFactory，并进行 XML 文件读取
+			// 用的是 DefaultListableBeanFactory
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
-			// 对beanFactory 进行各种功能填充
+			// 对beanFactory 进行各种功能组件的填充
+			// 对一些不需要走spring生命周期的处理器进行实例的注册
+			// （并不是注册到beanDefinitionMap中，而是直接将实例放入相应的容器中）
 			prepareBeanFactory(beanFactory);
 
 			try {
@@ -534,9 +537,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 				// Invoke factory processors registered as beans in the context.
 				// 激活各种 BeanFactoryPostProcessor，完成扫描
+				// 空的方法
 				invokeBeanFactoryPostProcessors(beanFactory);
 
-				// 注册拦截 Bean 创建的 beanPostProcessor。
+				// 注册beanPostProcessor
 				// Register bean processors that intercept bean creation.
 				registerBeanPostProcessors(beanFactory);
 
@@ -674,7 +678,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// Configure the bean factory with context callbacks.
 		// 添加BeanPostProcessor
 		// 问题：为什么要直接new，而不是注册后交给spring容器进行实例化？
-		// 因为不需要走bean的生命周期（spring源码中，大部分直接new的原因都是不需要走spring的生命周期才会那样操作）
+		// 因为需要走bean不的生命周期（spring源码中，大部分直接new的原因都是不需要走spring的生命周期才会那样操作）
 		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
 		// 设置几个忽略自动装配的接口
 		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
@@ -686,7 +690,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// BeanFactory interface not registered as resolvable type in a plain factory.
 		// MessageSource registered (and found for autowiring) as a bean.
-		// 设置几个自动装配的特殊规则
+		// 设置几个自动装配的特殊规则（这些bean会在依赖注入的时候用到）
 		beanFactory.registerResolvableDependency(BeanFactory.class, beanFactory);
 		beanFactory.registerResolvableDependency(ResourceLoader.class, this);
 		beanFactory.registerResolvableDependency(ApplicationEventPublisher.class, this);
