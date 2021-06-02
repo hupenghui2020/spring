@@ -2,78 +2,41 @@ package com.hph.demo.test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * @author 10499
- */
 public class Test1 {
 
-	private Object object1 = new Object();
+	private static ReentrantLock lock = new ReentrantLock(true);
 
-	private Object object2 = new Object();
+	public static void main(String[] args) throws InterruptedException {
 
-	private static List<User> userList = new ArrayList<>();
-
-	public static void main(String[] args) {
-
-		new Test1().test3();
-	}
-
-	private void test01(){
-
-		// 测试堆内存溢出，通过dump快照文件进行分析
-		while (true) {
-			userList.add(new User("hph", 27));
-			//new User("hph", 27);
+		List<Thread> threadList = new ArrayList<>();
+		Task task = new Task();
+		for(int n = 0; n < 10; n++) {
+			Thread thread = new Thread(task, String.valueOf(n));
+			threadList.add(thread);
+			thread.start();
 		}
+		Thread.sleep(1000);
+		threadList.get(3).interrupt();
+		System.out.println("线程中断了！！！！");
 	}
 
-	private void test02 () {
+	static class Task implements Runnable {
 
-		// 测试死锁，对线程的堆栈进行分析
-		Thread thread1 = new Thread(() -> {
-
-			synchronized (object1) {
-				System.out.println("thread1获取object1锁...");
-				try {
-					Thread.sleep(3000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+		@Override
+		public void run() {
+			lock.lock();
+			try {
+				System.out.println("线程"+ Thread.currentThread().getName() +"进来了!!!");
+				while(true) {
+					Thread.sleep(100);
 				}
-				synchronized (object2) {
-					System.out.println("thread1获取object2锁...");
-				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				lock.unlock();
 			}
-		});
-
-		Thread thread2 = new Thread(() -> {
-
-			synchronized (object2) {
-				System.out.println("thread2获取object2锁...");
-				try {
-					Thread.sleep(3000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				synchronized (object1) {
-					System.out.println("thread2获取object1锁...");
-				}
-			}
-		});
-
-		thread1.start();
-		thread2.start();
-	}
-
-	private void test3() {
-		while(true) {
-			sum();
 		}
-	}
-
-	private int sum() {
-
-		int a = 1,b = 2,c = a + b;
-		return c;
 	}
 }
