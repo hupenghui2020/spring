@@ -15,8 +15,6 @@ public class Test implements Runnable{
 	@Override
 	public void run() {
 
-		ThreadLocal
-
 		if(!t) {
 			t = true;
 			synchronized (o1) {
