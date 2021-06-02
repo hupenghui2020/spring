@@ -619,7 +619,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		if (earlySingletonExposure) {
 			Object earlySingletonReference = getSingleton(beanName, false);
 			if (earlySingletonReference != null) {
+				// 为什么这里进行比较
+				// 因为前面执行的 initializeBean 方法，里面会执行aop方法，可能会改变bean的类型（即exposedObject对象引用的是别的对象，这明显和bean的类型不一样）
 				if (exposedObject == bean) {
+					// TODO 如果相等，就说明没有改变bean的类型，bean还是原来那个bean，至于内部有没有被改变就不知道了（因为）
 					exposedObject = earlySingletonReference;
 				}
 				else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
