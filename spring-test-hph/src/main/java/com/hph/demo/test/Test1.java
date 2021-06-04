@@ -15,6 +15,7 @@ public class Test1 {
 		for(int n = 0; n < 10; n++) {
 			Thread thread = new Thread(task, String.valueOf(n));
 			threadList.add(thread);
+			Thread.sleep(1);
 			thread.start();
 		}
 		Thread.sleep(1000);
