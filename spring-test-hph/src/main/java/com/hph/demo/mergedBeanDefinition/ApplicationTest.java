@@ -15,6 +15,7 @@ public class ApplicationTest {
 
 	public static void main(String[] args) {
 
+		// 初始化容器对象的时候就会将一些内部的 BeanDefinitionPostProcessor 进行注册
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
 		ac.register(DemoConfig.class);
 
