@@ -894,7 +894,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// 这里的意思如下：
 		if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
 			// InstantiationAwareBeanPostProcessor：字面意思是实例化增强的beanPostProcessor，就是当创建bean的时候，
-			// 	实例化后需要这个类型的beanPostProcessor进行增强处理，比如属性注入，所有这里进行标记，后面进行属性注入等增强操作时就直接判断一下就可以了
+			// 	实例化后需要这个类型的beanPostProcessor进行增强处理，比如属性注入，所以这里进行标记，后面进行属性注入等增强操作时就直接判断一下就可以了
 			this.hasInstantiationAwareBeanPostProcessors = true;
 		}
 		if (beanPostProcessor instanceof DestructionAwareBeanPostProcessor) {
@@ -1685,7 +1685,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				return beanInstance;
 			}
 			if (!(beanInstance instanceof FactoryBean)) {
-				// bean name带&前缀但是不是FactoryBean的实例，抛异常
+				// bean name带&前缀但不是FactoryBean的实例，抛异常
 				throw new BeanIsNotAFactoryException(beanName, beanInstance.getClass());
 			}
 		}

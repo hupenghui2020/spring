@@ -94,7 +94,8 @@ final class PostProcessorRegistrationDelegate {
 			// 2、实现了 BeanDefinitionRegistryPostProcessor 接口的
 			// 先执行实现了 BeanDefinitionRegistryPostProcessor 接口的
 			// 这里先执行程序员自己添加的
-			// （beanFactoryPostProcessors是通过参数传过来的，也就是程序员通过BeanFactory 的 addBeanFactoryPostProcessor 方法进行添加的）
+			// （beanFactoryPostProcessors是通过参数传过来的，也就是程序员通过BeanFactory 的 addBeanFactoryPostProcessor 方法进行添加的,
+			// spring 在这之前还没有进行注册任何 beanFactoryPostProcessor）
 			// 为什么先执行程序员添加的？
 			// （为什么先执行程序员添加的，而且是实现了BeanDefinitionRegistryPostProcessor 接口的类的postProcessBeanDefinitionRegistry方法？
 			//（因为postProcessBeanDefinitionRegistry方法提供一个BeanDefinitionRegistry类型参数，这个参数可以手动注册bean，而不需要进行扫描进行注册））
@@ -129,7 +130,7 @@ final class PostProcessorRegistrationDelegate {
 			// 正常情况下，这里符合条件的类只有一个，那就是ConfigurationClassPostProcessor，这个类是完成spring的扫描的
 			// （为什么说是正常情况下？因为不考虑执行程序员手动添加的实现了 BeanDefinitionRegistryPostProcessor
 			// 接口的类的postProcessBeanDefinitionRegistry方法的话，没有地方有对符合这种要求的类进行注册的了，
-			// spring也只注册了ConfigurationClassPostProcessor一个）
+			// spring 也只注册了ConfigurationClassPostProcessor一个）
 			List<BeanDefinitionRegistryPostProcessor> currentRegistryProcessors = new ArrayList<>();
 
 			// First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
@@ -137,6 +138,7 @@ final class PostProcessorRegistrationDelegate {
 			// 从 bdmap 获取 beanDefinition 的 beanClass 类型为 BeanDefinitionRegistryPostProcessor
 			// 注意：这里是拿不到程序员通过 addBeanFactoryPostProcessor 方法添加的bean的
 			// 所以执行的是 spring 内置的 BeanDefinitionRegistryPostProcessor
+			// 就是在实例化容器的时候注册的内部 internalConfigurationAnnotationProcessor
 			String[] postProcessorNames =
 					beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
 			for (String ppName : postProcessorNames) {
@@ -162,7 +164,8 @@ final class PostProcessorRegistrationDelegate {
 			// 再加上扫描出程序员自定义注册的 BeanDefinitionRegistryPostProcessor
 			// （注意：这里的是程序员自定义的，并由spring进行注册的，和上面程序员添加的不同）
 			// 为什么上面调用getBeanNamesForType拿不到程序员自定义的呢，而这里可以拿到？
-			// (2个原因：1、因为上面注册后，在beanDefinitionMap容器中有，然后这里调用getBeanNamesForType就能拿到；
+			// (2个原因：
+			//  1、因为上面注册后，在beanDefinitionMap容器中有，然后这里调用getBeanNamesForType就能拿到；
 			// 	2、上面调用postProcessBeanDefinitionRegistry方法可能会手动注册一个bean，调用getBeanNamesForType保证拿全）
 			postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
 			for (String ppName : postProcessorNames) {

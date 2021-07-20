@@ -568,7 +568,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// 可以通过 post-processors 去 modify 合并的 beanDefinition
 		// 和循环依赖无关
 		synchronized (mbd.postProcessingLock) {
-			// 表明是否已被MergedBeanDefinitionPostProcessor 处理过
+			// 表明是否已被 MergedBeanDefinitionPostProcessor 处理过，
+			// MergedBeanDefinitionPostProcessor就是spring容器实例化的时候注册的那几个内部bpp，
+			// 里面就包括处理 @Autowired 注解和 Resource 注解的 bpp
 			if (!mbd.postProcessed) {
 				try {
 					// 缓存所有加了 @Autowired 注解的属性和方法，下面进行依赖注入的时候用

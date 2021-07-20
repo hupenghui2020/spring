@@ -822,6 +822,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	public void clearMetadataCache() {
 		// 清除没有被创建的bean的 mergedBeanDefinition
 		// （为什么呢？ 因为bean已经被创建了的话就不用关心beanDefinition是否已被修改，这时候用的mergedBeanDefinition已经是最新的了）
+		// 科可是为什么要清除没有实例化的呢？难道是因为前面执行 bfpp、bdrpp 或 bpp 的时候被污染了？
 		super.clearMetadataCache();
 		this.mergedBeanDefinitionHolders.clear();
 		// 通过类型清除缓存的依赖项名称
