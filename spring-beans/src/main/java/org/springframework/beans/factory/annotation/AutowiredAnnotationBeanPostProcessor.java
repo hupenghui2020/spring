@@ -384,7 +384,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
 	@Override
 	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) {
-		// 这里进行判断有哪些需要注入的元数据（包括属性和方法参数）
+		// 这里进行判断有哪些需要注入的元数据（包括属性和方法参数），因为 @Autowired 注解可以加在属性和方法上
 		InjectionMetadata metadata = findAutowiringMetadata(beanName, bean.getClass(), pvs);
 		try {
 			metadata.inject(bean, beanName, pvs);
@@ -480,6 +480,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 				if (!BridgeMethodResolver.isVisibilityBridgeMethodPair(method, bridgedMethod)) {
 					return;
 				}
+				// 获取方法上注解的属性
 				AnnotationAttributes ann = findAutowiredAnnotation(bridgedMethod);
 				if (ann != null && method.equals(ClassUtils.getMostSpecificMethod(method, clazz))) {
 					if (Modifier.isStatic(method.getModifiers())) {
@@ -494,6 +495,8 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 									method);
 						}
 					}
+					// true：注解不存在required属性，或者存在但是属性值为true
+					// false：注解存在required属性，但是属性值为false
 					boolean required = determineRequiredStatus(ann);
 					PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, clazz);
 					currElements.add(new AutowiredMethodElement(method, required, pd));
@@ -528,6 +531,8 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 	 * or method when no beans are found.
 	 * @param ann the Autowired annotation
 	 * @return whether the annotation indicates that a dependency is required
+	 * true：注解不存在required属性，或者存在但是属性值为true
+	 * false：注解存在required属性，但是属性值为false
 	 */
 	protected boolean determineRequiredStatus(AnnotationAttributes ann) {
 		return (!ann.containsKey(this.requiredParameterName) ||

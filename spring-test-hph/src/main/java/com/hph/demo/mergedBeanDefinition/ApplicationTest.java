@@ -44,6 +44,7 @@ public class ApplicationTest {
 		ac.registerBeanDefinition("gbd1", gbd1);
 		ac.registerBeanDefinition("gbd2", gbd2);*/
 		ac.refresh();
+		ac.getBean(Ambd.class).test();
 		System.out.println("------------------------------");
 	}
 }
