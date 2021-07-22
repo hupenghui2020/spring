@@ -334,8 +334,8 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
 			return bean;
 		}
-		// 给定的 bean 类是否代表一个基础设施类，是的话不应代理
-		// 或者配置了指定bean 不需要自动代理
+		// 给定的 bean 类是否代表一个基础设施类，是的话不应代理；比如 Advice类、Pointcut类、Advisor类、AopInfrastructureBean类
+		// 或者配置了指定bean 不需要自动代理（当前bean是一个切面）
 		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
 			this.advisedBeans.put(cacheKey, Boolean.FALSE);
 			return bean;
