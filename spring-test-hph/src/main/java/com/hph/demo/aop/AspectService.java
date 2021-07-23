@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 public class AspectService implements IAspectService{
 
 	@Autowired
-	private A a;
+	private B b;
 
 	@Override
 	public void testAop1(){
 
-		System.out.println(a);
+		System.out.println(b);
 		System.out.println("测试aop！！！！！！！！");
 	}
 

@@ -597,6 +597,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 			// 3：添加一个单例工厂对象，可以产生半成品 bean 对象
 			// 半成品 bean：就是普通的 java 对象，还未进行属性的填充
+			// 为什么要进行
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 

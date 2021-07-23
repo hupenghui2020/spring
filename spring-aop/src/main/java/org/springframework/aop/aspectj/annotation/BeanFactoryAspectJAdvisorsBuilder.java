@@ -83,7 +83,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 	public List<Advisor> buildAspectJAdvisors() {
 		List<String> aspectNames = this.aspectBeanNames;
 
-		// 第一次执行是在实例化之前调用beanPostProcessor的 postProcessBeforeInstantiation 方法的时候
+		// 第一次执行是在实例化之前调用 beanPostProcessor 的 postProcessBeforeInstantiation 方法的时候
 		if (aspectNames == null) {
 			synchronized (this) {
 				aspectNames = this.aspectBeanNames;
@@ -93,7 +93,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 					// 获取所有的 beanNames
 					String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
 							this.beanFactory, Object.class, true, false);
-					// 循环所有的beanName找出对应的增强方法
+					// 循环所有的beanName找出对应的通知方法
 					for (String beanName : beanNames) {
 						// 不合法的bean则略过，由子类定义规则，默认返回true
 						if (!isEligibleBean(beanName)) {
@@ -111,9 +111,10 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 							aspectNames.add(beanName);
 							AspectMetadata amd = new AspectMetadata(beanType, beanName);
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
+								// aspect 的工厂方法，通过这个工厂的方法获取aspect实例
 								MetadataAwareAspectInstanceFactory factory =
 										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
-								// 解析标记 AspectJ 注解中的增强方法
+								// 解析标记 AspectJ 注解中的通知方法
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 								if (this.beanFactory.isSingleton(beanName)) {
 									this.advisorsCache.put(beanName, classAdvisors);
