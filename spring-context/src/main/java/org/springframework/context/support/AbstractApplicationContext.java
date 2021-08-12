@@ -520,7 +520,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
-			// 初始化 beanFactory，并进行 XML 文件读取
+			// 初始化 beanFactory，并进行 XML 文件读取，
+			// 所以说你用的是 AnnotationConfigApplicationContext 容器的话就没做什么
 			// 用的是 DefaultListableBeanFactory
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 

@@ -863,6 +863,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		// 触发所有非惰性单例bean的初始化...
 		for (String beanName : beanNames) {
+			// 为什么这里是 RootBeanDefinition，因为之前解析的 beanDefinition 是通过各个渠道获取的，这里进行类型的统一
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
 				if (isFactoryBean(beanName)) {
