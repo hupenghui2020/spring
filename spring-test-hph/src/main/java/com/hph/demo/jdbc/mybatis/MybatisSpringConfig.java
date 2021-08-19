@@ -25,6 +25,7 @@ public class MybatisSpringConfig {
 
 	/**
 	 * 相当于提供sql操作的代理对象
+	 * 解析xml文件，将mapper.xml解析到 Configuration 中
 	 * @param dataSource
 	 * @return
 	 */
@@ -65,6 +66,11 @@ public class MybatisSpringConfig {
 		return mapperScannerConfigurer;
 	}
 
+	/**
+	 * mybatis支持spring的事务
+	 * @param dataSource
+	 * @return
+	 */
 	@Bean
 	public DataSourceTransactionManager transactionManager(DataSource dataSource){
 
